@@ -109,6 +109,7 @@
   "exclude": [
     "node_modules",
     "**/*.test.ts",
+    "scripts",
     "dist",
     ".api"
   ],
