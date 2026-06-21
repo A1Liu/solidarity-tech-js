@@ -1,9 +1,14 @@
 import type { ClientConfig } from "./client";
-import * as endpoints from "./endpoints";
+import * as coreEndpoints from "./endpoints-unverified-stub";
+import * as eventEndpoints from "./endpoints/events";
 
 export * from "./client";
 export * from "./schemas";
-export * from "./endpoints";
+
+export const Endpoints = {
+  ...coreEndpoints,
+  ...eventEndpoints,
+} as const;
 
 type EndpointFn = (config: ClientConfig, ...args: never[]) => unknown;
 
@@ -13,7 +18,7 @@ type Bound<F> = F extends (config: ClientConfig, ...args: infer A) => infer R
 
 /** All endpoint functions with their leading `ClientConfig` argument bound. */
 export type SolidarityClient = {
-  [K in keyof typeof endpoints]: Bound<(typeof endpoints)[K]>;
+  [K in keyof typeof Endpoints]: Bound<(typeof Endpoints)[K]>;
 };
 
 /**
@@ -27,8 +32,9 @@ export type SolidarityClient = {
  */
 export function createClient(config: ClientConfig): SolidarityClient {
   const bound: Record<string, unknown> = {};
-  for (const [name, fn] of Object.entries(endpoints)) {
-    bound[name] = (...args: unknown[]) => (fn as EndpointFn)(config, ...(args as never[]));
+  for (const [name, fn] of Object.entries(Endpoints)) {
+    bound[name] = (...args: unknown[]) =>
+      (fn as EndpointFn)(config, ...(args as never[]));
   }
   return bound as SolidarityClient;
 }

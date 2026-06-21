@@ -15,40 +15,11 @@ import type {
   CustomUserPropertiesResponse,
   TextsResponse,
   UsersResponse,
+  ListParams,
+  ScopeType,
+  Address,
+  EventLocationData,
 } from "./schemas";
-
-/* ------------------------------------------------------------------ *
- * Shared request shapes
- * ------------------------------------------------------------------ */
-
-/** Pagination/`_since` parameters common to every list endpoint. */
-export interface ListParams {
-  _limit?: number;
-  _offset?: number;
-  _since?: number;
-}
-
-export type ScopeType = "Organization" | "Chapter";
-
-export interface Address {
-  address1?: string | null;
-  address2?: string | null;
-  city?: string | null;
-  state?: string | null;
-  zip_code?: string | null;
-  country?: string | null;
-}
-
-export interface EventLocationData {
-  components?: string | null;
-  coordinates?: string | null;
-  address_city?: string | null;
-  full_address?: string | null;
-  address_state?: string | null;
-  address_line_1?: string | null;
-  address_country?: string | null;
-  address_postal_code?: string | null;
-}
 
 /* ------------------------------------------------------------------ *
  * Activities
@@ -354,23 +325,6 @@ export function updateEventSession(
 /** DELETE /event_sessions/{id} — Deletes an event session. */
 export function deleteEventSession(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/event_sessions/${id}`);
-}
-
-/* ------------------------------------------------------------------ *
- * Events
- * ------------------------------------------------------------------ */
-
-/** GET /events — Lists events. */
-export function listEvents(
-  config: ClientConfig,
-  params: ListParams = {},
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, "/events", { query: { ...params } });
-}
-
-/** GET /events/{id} — Shows a single event. */
-export function getEvent(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
-  return apiGet(config, `/events/${id}`);
 }
 
 /* ------------------------------------------------------------------ *
