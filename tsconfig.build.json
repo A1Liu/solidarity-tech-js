@@ -110,6 +110,8 @@
     "node_modules",
     "**/*.test.ts",
     "scripts",
+    "tests",
+    "vitest.config.ts",
     "dist",
     ".api"
   ],

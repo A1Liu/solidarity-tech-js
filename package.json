@@ -18,6 +18,7 @@
   },
   "scripts": {
     "compile": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
     "update": "./script.sh"
   },
   "files": [

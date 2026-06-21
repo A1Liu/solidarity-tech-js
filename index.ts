@@ -40,3 +40,6 @@ export function createClient(config: ClientConfig): SolidarityClient {
 }
 
 export default createClient;
+
+export type * from "./endpoints-unverified-stub";
+export type * from "./endpoints/events";
