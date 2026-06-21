@@ -108,6 +108,16 @@ export const stEventSession = z.object({
   city_state_label: z.string().nullable(),
 });
 
+/** Per-event toggles for the automated RSVP/reminder messages. */
+export const stEventAutomationStatus = z.object({
+  rsvp_confirmation_email: z.boolean(),
+  rsvp_confirmation_text: z.boolean(),
+  day_before_email_reminder: z.boolean(),
+  day_before_text_reminder: z.boolean(),
+  day_of_email_reminder: z.boolean(),
+  day_of_text_reminder: z.boolean(),
+});
+
 export const stEvent = z.object({
   id: z.number().int(),
   title: z.string(),
@@ -125,6 +135,7 @@ export const stEvent = z.object({
   description: z.string().nullable(),
   hide_address_until_rsvp: z.boolean(),
   show_in_web_calendars: z.boolean(),
+  automation_status: stEventAutomationStatus,
   primary_event_id: z.number().int(),
   is_co_hosted_mirror: z.boolean(),
   created_at: z.string(),
@@ -139,6 +150,7 @@ export type StCoordinates = z.infer<typeof stCoordinates>;
 export type StAddressComponent = z.infer<typeof stAddressComponent>;
 export type StLocationData = z.infer<typeof stLocationData>;
 export type StEventSession = z.infer<typeof stEventSession>;
+export type StEventAutomationStatus = z.infer<typeof stEventAutomationStatus>;
 export type StEvent = z.infer<typeof stEvent>;
 export type EventsResponse = z.infer<typeof eventsResponse>;
 
