@@ -8,9 +8,13 @@ if (!apiKey) {
 
 const client = createClient({ apiKey });
 
-const res = await client.createUserAction({
-  page_id: 19961,
+const res = await client.createEventRsvp({
   user_id: 10713639,
+  event_id: 20524,
+  event_session_id: 56883,
+  is_attending: "yes",
+  is_confirmed: true,
+  agent_user_id: 10713639,
 });
 
 if (!res.ok) {
