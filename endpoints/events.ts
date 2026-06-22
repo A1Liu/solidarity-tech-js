@@ -163,10 +163,16 @@ export function listEvents(
   config: ClientConfig,
   params: ListParams = {},
 ): Promise<ApiResult<EventsResponse>> {
-  return apiGet(config, "/events", { query: { ...params }, schema: eventsResponse });
+  return apiGet(config, "/events", {
+    query: { ...params },
+    schema: eventsResponse,
+  });
 }
 
 /** GET /events/{id} — Shows a single event. */
-export function getEvent(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getEvent(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/events/${id}`);
 }

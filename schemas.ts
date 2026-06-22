@@ -183,7 +183,9 @@ export type CallsResponse = z.infer<typeof callsResponse>;
 export type Chapter = z.infer<typeof chapter>;
 export type ChaptersResponse = z.infer<typeof chaptersResponse>;
 export type CustomUserProperty = z.infer<typeof customUserProperty>;
-export type CustomUserPropertiesResponse = z.infer<typeof customUserPropertiesResponse>;
+export type CustomUserPropertiesResponse = z.infer<
+  typeof customUserPropertiesResponse
+>;
 export type Text = z.infer<typeof text>;
 export type TextsResponse = z.infer<typeof textsResponse>;
 export type User = z.infer<typeof user>;
