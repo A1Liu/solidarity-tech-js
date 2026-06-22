@@ -1,0 +1,10 @@
+summary: ''
+display_name: canvass_map
+default_permissioned_as: []
+extra_perms:
+  u/albertymliu: true
+  u/avibagla: true
+  u/benpaulryanpacker: true
+  u/nick: true
+owners:
+  - u/albertymliu

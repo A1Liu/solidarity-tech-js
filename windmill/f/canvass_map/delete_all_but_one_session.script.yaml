@@ -1,0 +1,28 @@
+summary: Delete all but one session of a Solidarity Tech event
+description: Reads a Solidarity Tech event's sessions and deletes all of them
+  except the anchor (the first session carrying a location).
+lock: '!inline f/canvass_map/delete_all_but_one_session.script.lock'
+has_on_behalf_of: false
+kind: script
+schema:
+  $schema: https://json-schema.org/draft/2020-12/schema
+  type: object
+  properties:
+    apiKey:
+      type: string
+      description: Windmill variable path holding the Solidarity Tech API key.
+      default: null
+      originalType: string
+    eventId:
+      type: integer
+      description: ST event id whose sessions should be pruned to one.
+      default: null
+      originalType: number
+    dryRun:
+      type: boolean
+      description: Log what would be deleted without hitting the Solidarity Tech API.
+      default: false
+      originalType: boolean
+  required:
+    - apiKey
+    - eventId

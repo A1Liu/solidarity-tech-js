@@ -1,0 +1,7 @@
+summary: Canvass-map admin scripts & apps. No-API key access.
+display_name: canvass_admin
+default_permissioned_as: []
+extra_perms:
+  u/albertymliu: true
+owners:
+  - u/albertymliu

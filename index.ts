@@ -1,13 +1,22 @@
 import type { ClientConfig } from "./client";
+
 import * as coreEndpoints from "./endpoints-unverified-stub";
+
 import * as eventEndpoints from "./endpoints/events";
+import * as userEndpoints from "./endpoints/users";
+import * as userActionsEndpoints from "./endpoints/user_actions";
+import * as rsvpEndpoints from "./endpoints/rsvps";
 
 export * from "./client";
 export * from "./schemas";
 
 export const Endpoints = {
   ...coreEndpoints,
+
   ...eventEndpoints,
+  ...userEndpoints,
+  ...rsvpEndpoints,
+  ...userActionsEndpoints,
 } as const;
 
 type EndpointFn = (config: ClientConfig, ...args: never[]) => unknown;

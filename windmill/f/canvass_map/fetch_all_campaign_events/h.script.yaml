@@ -1,0 +1,41 @@
+summary: Add Campaign to Object
+description: This script was edited in place of flow
+  f/canvass_map/fetch_all_campaign_events  by joolean.
+lock: '!inline f/canvass_map/fetch_all_campaign_events/h.script.lock'
+has_on_behalf_of: false
+kind: script
+schema:
+  $schema: https://json-schema.org/draft/2020-12/schema
+  type: object
+  properties:
+    campaign:
+      type: string
+      description: ''
+      default: null
+      originalType: string
+    cantComeLink:
+      type: string
+      description: ''
+      default: null
+      originalType: string
+    cantComeText:
+      type: string
+      description: ''
+      default: null
+      originalType: string
+    events:
+      type: ''
+      description: ''
+      default: null
+      format: ''
+    iframeStyles:
+      type: ''
+      description: ''
+      default: null
+      format: ''
+  required:
+    - campaign
+    - events
+    - cantComeText
+    - cantComeLink
+    - iframeStyles

@@ -1,0 +1,23 @@
+summary: Create Solidarity Tech event sessions from a CSV schedule
+description: Fetches GOTV-tagged Solidarity Tech events, matches each to a CSV
+  schedule row via the event's staging-location tag, and creates the scheduled
+  sessions on it (reusing the event's existing session location).
+lock: '!inline f/canvass_map/create_solidarity_tech_events_from_csv.script.lock'
+has_on_behalf_of: false
+kind: script
+schema:
+  $schema: https://json-schema.org/draft/2020-12/schema
+  type: object
+  properties:
+    apiKey:
+      type: string
+      description: Windmill variable path holding the Solidarity Tech API key.
+      default: null
+      originalType: string
+    dryRun:
+      type: boolean
+      description: Parse and log without hitting the Solidarity Tech API.
+      default: false
+      originalType: boolean
+  required:
+    - apiKey

@@ -1,0 +1,323 @@
+summary: Get Events Table
+value:
+  fullscreen: false
+  grid:
+    - '12':
+        fixed: true
+        fullHeight: false
+        h: 1
+        w: 12
+        x: 0
+        y: 0
+      '3':
+        fixed: true
+        fullHeight: false
+        h: 2
+        w: 6
+        x: 0
+        y: 0
+      id: topbar
+      data:
+        id: topbar
+        type: containercomponent
+        configuration: {}
+        customCss:
+          container:
+            class: '!p-0'
+            style: ''
+        numberOfSubgrids: 1
+    - '12':
+        fixed: false
+        fullHeight: false
+        h: 16
+        w: 12
+        x: 0
+        y: 1
+      '3':
+        fixed: false
+        fullHeight: false
+        h: 10
+        w: 3
+        x: 0
+        y: 10
+      id: b
+      data:
+        id: b
+        type: aggridcomponent
+        actions: []
+        componentInput:
+          type: runnable
+          value:
+            - id: 1
+              name: A cell with a long name
+              age: 42
+            - id: 2
+              name: A briefer cell
+              age: 84
+          autoRefresh: true
+          connections: []
+          fields:
+            database:
+              type: static
+              value: $res:f/canvass_map/database
+              fieldType: object
+              format: resource-postgresql
+          fieldType: array
+          hideRefreshButton: false
+          recomputeOnInputChanged: true
+          runnable:
+            name: Inline Script
+            inlineScript:
+              content: '!inline inline_script.pg.sql'
+              lock: ''
+              language: postgresql
+              path: f/canvass_admin/events_table/Inline_Script
+              schema:
+                $schema: https://json-schema.org/draft/2020-12/schema
+                type: object
+                properties:
+                  database:
+                    type: object
+                    description: ''
+                    format: resource-postgresql
+                required:
+                  - database
+          subFieldType: object
+        configuration:
+          allEditable:
+            type: static
+            value: false
+          columnDefs:
+            type: static
+            value:
+              - field: id
+                flex: 1
+              - cellRendererType: text
+                editable: true
+                field: event_series_id
+                filter: false
+                flex: 1
+                headerName: ST Event
+                hide: false
+                sort: null
+                valueFormatter: ''
+              - editable: true
+                field: title
+                flex: 1
+              - field: rsvps
+                flex: 1
+              - editable: true
+                field: start_time
+                flex: 1
+              - cellRendererType: text
+                editable: true
+                field: end_time
+                filter: false
+                flex: 1
+                headerName: End Time
+                hide: false
+                sort: null
+                valueFormatter: ''
+              - cellRendererType: text
+                editable: true
+                field: location_address
+                filter: false
+                flex: 1
+                headerName: Address
+                hide: false
+                sort: null
+                valueFormatter: ''
+              - editable: true
+                field: borough
+                flex: 1
+              - editable: true
+                field: neighborhood
+                flex: 1
+              - editable: true
+                field: campaigns
+                flex: 1
+              - editable: true
+                field: tags
+                flex: 1
+              - cellRendererType: text
+                editable: true
+                field: source_campaign
+                filter: false
+                flex: 1
+                headerName: Host
+                hide: false
+                sort: null
+                valueFormatter: ''
+              - editable: true
+                field: url
+                flex: 1
+              - field: lat
+                flex: 1
+                headerName: lat
+              - field: lon
+                flex: 1
+                headerName: lon
+              - field: page_id
+                flex: 1
+                headerName: page_id
+              - field: location_name
+                flex: 1
+                headerName: location_name
+              - field: st_host_url
+                flex: 1
+                headerName: st_host_url
+              - field: st_event_type
+                flex: 1
+                headerName: st_event_type
+              - field: st_event_title
+                flex: 1
+                headerName: st_event_title
+              - field: st_event_tags
+                flex: 1
+                headerName: st_event_tags
+              - field: st_session_note
+                flex: 1
+                headerName: st_session_note
+              - field: st_session_tags
+                flex: 1
+                headerName: st_session_tags
+              - field: st_attendance_count
+                flex: 1
+                headerName: st_attendance_count
+              - field: st_show_title_in_form
+                flex: 1
+                headerName: st_show_title_in_form
+              - field: st_event_page_url
+                flex: 1
+                headerName: st_event_page_url
+              - field: automation_status
+                flex: 1
+                headerName: automation_status
+          compactness:
+            type: static
+            value: normal
+          customActionsHeader:
+            type: static
+          extraConfig:
+            type: static
+            value: {}
+          flex:
+            type: static
+            value: false
+          footer:
+            type: static
+            value: true
+          multipleSelectable:
+            type: static
+            value: false
+          pagination:
+            type: static
+            value: false
+          rowIdCol:
+            type: static
+            value: ''
+          rowMultiselectWithClick:
+            type: static
+            value: false
+          selectFirstRowByDefault:
+            type: static
+            value: false
+          wrapActions:
+            type: static
+            value: false
+        customCss:
+          container:
+            class: ''
+            style: ''
+  hiddenInlineScripts: []
+  hideLegacyTopBar: true
+  mobileViewOnSmallerScreens: false
+  subgrids:
+    topbar-0:
+      - '12':
+          fixed: false
+          fullHeight: false
+          h: 1
+          w: 6
+          x: 0
+          y: 0
+        '3':
+          fixed: false
+          fullHeight: false
+          h: 1
+          w: 6
+          x: 0
+          y: 0
+        id: title
+        data:
+          id: title
+          type: textcomponent
+          componentInput:
+            type: templatev2
+            connections:
+              - id: summary
+                componentId: ctx
+            eval: ${ctx.summary}
+            fieldType: template
+          configuration:
+            copyButton:
+              type: static
+              value: false
+            disableNoText:
+              type: static
+              value: true
+              fieldType: boolean
+            style:
+              type: static
+              value: Body
+            tooltip:
+              type: evalv2
+              value: ''
+              connections:
+                - id: author
+                  componentId: ctx
+              expr: '`Author: ${ctx.author}`'
+              fieldType: text
+          customCss:
+            container:
+              class: ''
+              style: ''
+            text:
+              class: text-xl font-semibold whitespace-nowrap truncate
+              style: ''
+          horizontalAlignment: left
+          verticalAlignment: center
+      - '12':
+          fixed: false
+          fullHeight: false
+          h: 1
+          w: 6
+          x: 6
+          y: 0
+        '3':
+          fixed: false
+          fullHeight: false
+          h: 1
+          w: 3
+          x: 0
+          y: 1
+        id: recomputeall
+        data:
+          id: recomputeall
+          type: recomputeallcomponent
+          configuration:
+            defaultRefreshInterval:
+              type: static
+              value: '0'
+          customCss:
+            container:
+              class: ''
+              style: ''
+          horizontalAlignment: right
+          menuItems: []
+          verticalAlignment: center
+  theme:
+    type: path
+    path: f/app_themes/theme_0
+  unusedInlineScripts: []
+public: true

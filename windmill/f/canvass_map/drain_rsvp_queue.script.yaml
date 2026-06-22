@@ -1,0 +1,67 @@
+summary: Drain the rsvp_queue table
+description: Connects to Postgres via a connection URL and processes queued
+  rsvp_queue rows (oldest first) using FOR UPDATE SKIP LOCKED. Does dummy
+  processing per item, waits 5s on an empty queue, and exits after 2 minutes
+  idle.
+lock: '!inline f/canvass_map/drain_rsvp_queue.script.lock'
+has_on_behalf_of: false
+kind: script
+schema:
+  $schema: https://json-schema.org/draft/2020-12/schema
+  type: object
+  order:
+    - db
+    - idleTimeoutMinutes
+  properties:
+    db:
+      type: object
+      description: ''
+      default: null
+      format: resource-postgresql
+      properties:
+        dbname:
+          type: string
+          description: ''
+          originalType: string
+        host:
+          type: string
+          description: ''
+          originalType: string
+        password:
+          type: string
+          description: ''
+          originalType: string
+        port:
+          type: number
+          description: ''
+        region:
+          type: string
+          description: ''
+          originalType: string
+        root_certificate_pem:
+          type: string
+          description: ''
+          originalType: string
+        sslmode:
+          type: string
+          description: ''
+          originalType: string
+        use_iam_auth:
+          type: boolean
+          description: ''
+        user:
+          type: string
+          description: ''
+          originalType: string
+    idleTimeoutMinutes:
+      type: number
+      description:
+        How long (in minutes) the drain keeps polling an empty queue before
+        exiting. Defaults to 2 minutes.
+      default: 2
+    maxLifetimeMinutes:
+      type: number
+      description: ''
+      default: 4
+  required:
+    - db

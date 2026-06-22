@@ -1,0 +1,63 @@
+summary: Scrape Solidarity Tech Events to DB
+description: ''
+lock: '!inline f/canvass_map/scrape_solidarity_tech_events_to_db.script.lock'
+has_on_behalf_of: false
+kind: script
+schema:
+  $schema: https://json-schema.org/draft/2020-12/schema
+  type: object
+  order:
+    - db
+  properties:
+    db:
+      type: object
+      description: ''
+      default: null
+      format: resource-postgresql
+      order:
+        - host
+        - port
+        - user
+        - dbname
+        - region
+        - sslmode
+        - password
+        - use_iam_auth
+        - root_certificate_pem
+      properties:
+        dbname:
+          type: string
+          description: ''
+          originalType: string
+        host:
+          type: string
+          description: ''
+          originalType: string
+        password:
+          type: string
+          description: ''
+          originalType: string
+        port:
+          type: number
+          description: ''
+        region:
+          type: string
+          description: ''
+          originalType: string
+        root_certificate_pem:
+          type: string
+          description: ''
+          originalType: string
+        sslmode:
+          type: string
+          description: ''
+          originalType: string
+        use_iam_auth:
+          type: boolean
+          description: ''
+        user:
+          type: string
+          description: ''
+          originalType: string
+  required:
+    - db

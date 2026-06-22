@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "@a1liu/solidarity-tech-api": "0.1.11",
+    "windmill-client": "latest"
+  }
+}
+//bun.lock
+{
+  "lockfileVersion": 1,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "dependencies": {
+        "@a1liu/solidarity-tech-api": "0.1.11",
+        "windmill-client": "latest",
+      },
+    },
+  },
+  "packages": {
+    "@a1liu/solidarity-tech-api": ["@a1liu/solidarity-tech-api@0.1.11", "", { "dependencies": { "zod": "^4.4.3" }, "peerDependencies": { "typescript": "^5.0.0" } }, "sha512-eZ+XCgmXPIgwfSkfLEtCfE5NtbwVqdyVDJGu3hgtihDQVtpVefzKtNcxKM8neu8zbdkVBeSksvheer6S2DP6IQ=="],
+
+    "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
+
+    "windmill-client": ["windmill-client@1.734.0", "", {}, "sha512-LYbcSR2avEU02CYzaEC0NTrYJSCzoxRVl6U7CDiIzPLecKuOWVi40gIWXNPygeneIQtjyZ/W96oGtPtGGa0unQ=="],
+
+    "zod": ["zod@4.4.3", "", {}, "sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ=="],
+  }
+}

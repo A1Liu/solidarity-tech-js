@@ -34,7 +34,10 @@ export function listActivities(
   config: ClientConfig,
   params: ListActivitiesParams = {},
 ): Promise<ApiResult<ActivitiesResponse>> {
-  return apiGet(config, "/activities", { query: { ...params }, schema: activitiesResponse });
+  return apiGet(config, "/activities", {
+    query: { ...params },
+    schema: activitiesResponse,
+  });
 }
 
 /* ------------------------------------------------------------------ *
@@ -75,7 +78,10 @@ export function createAgentAssignment(
 }
 
 /** GET /agent_assignments/{id} — Shows a single agent assignment. */
-export function getAgentAssignment(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getAgentAssignment(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/agent_assignments/${id}`);
 }
 
@@ -89,7 +95,10 @@ export function updateAgentAssignment(
 }
 
 /** DELETE /agent_assignments/{id} — Deletes an agent assignment. */
-export function deleteAgentAssignment(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function deleteAgentAssignment(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/agent_assignments/${id}`);
 }
 
@@ -106,7 +115,10 @@ export function listCalls(
   config: ClientConfig,
   params: ListCallsParams = {},
 ): Promise<ApiResult<CallsResponse>> {
-  return apiGet(config, "/calls", { query: { ...params }, schema: callsResponse });
+  return apiGet(config, "/calls", {
+    query: { ...params },
+    schema: callsResponse,
+  });
 }
 
 /* ------------------------------------------------------------------ *
@@ -134,7 +146,10 @@ export function listChapters(
   config: ClientConfig,
   params: ListParams = {},
 ): Promise<ApiResult<ChaptersResponse>> {
-  return apiGet(config, "/chapters", { query: { ...params }, schema: chaptersResponse });
+  return apiGet(config, "/chapters", {
+    query: { ...params },
+    schema: chaptersResponse,
+  });
 }
 
 /* ------------------------------------------------------------------ *
@@ -165,7 +180,10 @@ export function listEmailBlasts(
 }
 
 /** GET /email_blasts/{id} — Shows a single email blast. */
-export function getEmailBlast(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getEmailBlast(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/email_blasts/${id}`);
 }
 
@@ -204,61 +222,19 @@ export function createEventAttendance(
  * Event RSVPs
  * ------------------------------------------------------------------ */
 
-export interface ListEventRsvpsParams extends ListParams {
-  event_id?: number;
-}
-
-export interface EventRsvpCreate {
-  event_id: number;
-  event_session_id: number;
-  user_id?: number;
-  is_attending: "yes" | "no" | "maybe";
-  is_confirmed?: boolean;
-  agent_user_id: number | null;
-  source?: string | null;
-  source_system?: string | null;
-}
-
-export interface EventRsvpUpdate {
-  is_attending?: "yes" | "no" | "maybe";
-  is_confirmed?: boolean;
-  agent_user_id?: number | null;
-  source?: string | null;
-  source_system?: string | null;
-}
-
-/** GET /event_rsvps — Lists event rsvps. */
-export function listEventRsvps(
-  config: ClientConfig,
-  params: ListEventRsvpsParams = {},
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, "/event_rsvps", { query: { ...params } });
-}
-
-/** POST /event_rsvps — Creates an event rsvp. */
-export function createEventRsvp(
-  config: ClientConfig,
-  body: EventRsvpCreate,
-): Promise<ApiResult<unknown>> {
-  return apiPost(config, "/event_rsvps", { body });
-}
-
 /** GET /event_rsvps/{id} — Shows a single event rsvp. */
-export function getEventRsvp(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getEventRsvp(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/event_rsvps/${id}`);
 }
 
-/** PUT /event_rsvps/{id} — Updates an event rsvp. */
-export function updateEventRsvp(
+/** DELETE /event_rsvps/{id} — Deletes an event rsvp. */
+export function deleteEventRsvp(
   config: ClientConfig,
   id: number,
-  body: EventRsvpUpdate,
 ): Promise<ApiResult<unknown>> {
-  return apiPut(config, `/event_rsvps/${id}`, { body });
-}
-
-/** DELETE /event_rsvps/{id} — Deletes an event rsvp. */
-export function deleteEventRsvp(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/event_rsvps/${id}`);
 }
 
@@ -309,7 +285,10 @@ export function createEventSession(
 }
 
 /** GET /event_sessions/{id} — Shows a single event session. */
-export function getEventSession(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getEventSession(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/event_sessions/${id}`);
 }
 
@@ -323,7 +302,10 @@ export function updateEventSession(
 }
 
 /** DELETE /event_sessions/{id} — Deletes an event session. */
-export function deleteEventSession(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function deleteEventSession(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/event_sessions/${id}`);
 }
 
@@ -340,7 +322,10 @@ export function listOrganizations(
 }
 
 /** GET /organizations/{id} — Shows a single organization. */
-export function getOrganization(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getOrganization(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/organizations/${id}`);
 }
 
@@ -357,7 +342,10 @@ export function listPages(
 }
 
 /** GET /pages/{id} — Shows a single page. */
-export function getPage(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getPage(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/pages/${id}`);
 }
 
@@ -378,7 +366,10 @@ export function listPhonebanks(
 }
 
 /** GET /phonebanks/{id} — Shows a single phonebank. */
-export function getPhonebank(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getPhonebank(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/phonebanks/${id}`);
 }
 
@@ -400,7 +391,10 @@ export function listScheduledCalls(
 }
 
 /** GET /scheduled_calls/{id} — Shows a single scheduled call. */
-export function getScheduledCall(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getScheduledCall(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/scheduled_calls/${id}`);
 }
 
@@ -448,7 +442,10 @@ export function createScheduledTask(
 }
 
 /** GET /scheduled_tasks/{id} — Shows a single scheduled task. */
-export function getScheduledTask(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getScheduledTask(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/scheduled_tasks/${id}`);
 }
 
@@ -462,7 +459,10 @@ export function updateScheduledTask(
 }
 
 /** DELETE /scheduled_tasks/{id} — Deletes a scheduled task. */
-export function deleteScheduledTask(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function deleteScheduledTask(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/scheduled_tasks/${id}`);
 }
 
@@ -496,12 +496,18 @@ export function createTaskAgent(
 }
 
 /** GET /task_agents/{id} — Shows a single task agent. */
-export function getTaskAgent(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getTaskAgent(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/task_agents/${id}`);
 }
 
 /** DELETE /task_agents/{id} — Deletes a task agent. */
-export function deleteTaskAgent(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function deleteTaskAgent(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/task_agents/${id}`);
 }
 
@@ -541,7 +547,10 @@ export function createTaskAssignment(
 }
 
 /** GET /task_assignments/{id} — Shows a single task assignment. */
-export function getTaskAssignment(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getTaskAssignment(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/task_assignments/${id}`);
 }
 
@@ -555,7 +564,10 @@ export function updateTaskAssignment(
 }
 
 /** DELETE /task_assignments/{id} — Deletes a task assignment. */
-export function deleteTaskAssignment(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function deleteTaskAssignment(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/task_assignments/${id}`);
 }
 
@@ -584,7 +596,10 @@ export function listTextBlasts(
 }
 
 /** GET /text_blasts/{id} — Shows a single text blast. */
-export function getTextBlast(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getTextBlast(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/text_blasts/${id}`);
 }
 
@@ -630,7 +645,10 @@ export function createTextTemplate(
 }
 
 /** GET /text_templates/{id} — Shows a single text template. */
-export function getTextTemplate(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getTextTemplate(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/text_templates/${id}`);
 }
 
@@ -644,7 +662,10 @@ export function updateTextTemplate(
 }
 
 /** DELETE /text_templates/{id} — Deletes a text template. */
-export function deleteTextTemplate(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function deleteTextTemplate(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/text_templates/${id}`);
 }
 
@@ -665,7 +686,10 @@ export function listTextbanks(
 }
 
 /** GET /textbanks/{id} — Shows a single textbank. */
-export function getTextbank(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getTextbank(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/textbanks/${id}`);
 }
 
@@ -689,7 +713,10 @@ export interface ListTextsParams {
 }
 
 /** POST /texts — Sends a text message. Parameters are passed as query string. */
-export function sendText(config: ClientConfig, params: SendTextParams): Promise<ApiResult<unknown>> {
+export function sendText(
+  config: ClientConfig,
+  params: SendTextParams,
+): Promise<ApiResult<unknown>> {
   return apiPost(config, "/texts", { query: { ...params } });
 }
 
@@ -698,45 +725,10 @@ export function listTexts(
   config: ClientConfig,
   params: ListTextsParams = {},
 ): Promise<ApiResult<TextsResponse>> {
-  return apiGet(config, "/texts", { query: { ...params }, schema: textsResponse });
-}
-
-/* ------------------------------------------------------------------ *
- * User Actions
- * ------------------------------------------------------------------ */
-
-export interface UserActionData {
-  phone_number?: string | null;
-  email?: string | null;
-  first_name?: string | null;
-  last_name?: string | null;
-  preferred_language?: string | null;
-  second_language?: string | null;
-  chapter_id?: number | null;
-  address?: Address | null;
-  sms_permission?: boolean | null;
-  call_permission?: boolean | null;
-  email_permission?: boolean | null;
-  custom_user_properties?: Record<string, string> | null;
-}
-
-/**
- * Body for POST /user_actions. `page_id` is required; supply either an existing
- * `user_id` or a `data` object that identifies the user by phone number/email.
- */
-export interface UserActionCreate {
-  page_id: number;
-  user_id?: number | null;
-  created_at?: number | null;
-  data?: UserActionData;
-}
-
-/** POST /user_actions — Creates a user action. */
-export function createUserAction(
-  config: ClientConfig,
-  body: UserActionCreate,
-): Promise<ApiResult<unknown>> {
-  return apiPost(config, "/user_actions", { body });
+  return apiGet(config, "/texts", {
+    query: { ...params },
+    schema: textsResponse,
+  });
 }
 
 /* ------------------------------------------------------------------ *
@@ -752,7 +744,10 @@ export function listUserLists(
 }
 
 /** GET /user_lists/{id} — Shows a single user list. */
-export function getUserList(config: ClientConfig, id: number): Promise<ApiResult<unknown>> {
+export function getUserList(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<unknown>> {
   return apiGet(config, `/user_lists/${id}`);
 }
 
@@ -778,25 +773,6 @@ export function createUserNote(
  * Users
  * ------------------------------------------------------------------ */
 
-/**
- * Body for POST /users. The API requires at least one of `phone_number` or
- * `email` to identify the user.
- */
-export interface UserCreate {
-  phone_number?: string | null;
-  email?: string | null;
-  first_name?: string | null;
-  last_name?: string | null;
-  preferred_language?: string;
-  second_language?: string | null;
-  chapter_id?: number | null;
-  custom_user_properties?: Record<string, string> | null;
-  address?: Address | null;
-  sms_permission?: boolean | null;
-  call_permission?: boolean | null;
-  email_permission?: boolean | null;
-}
-
 export interface UserUpdate {
   phone_number?: string | null;
   email?: string | null;
@@ -812,17 +788,15 @@ export interface UserUpdate {
   email_permission?: boolean | null;
 }
 
-/** POST /users — Creates or updates a user. */
-export function createUser(config: ClientConfig, body: UserCreate): Promise<ApiResult<unknown>> {
-  return apiPost(config, "/users", { body });
-}
-
 /** GET /users — Retrieves a list of users. */
 export function listUsers(
   config: ClientConfig,
   params: ListParams = {},
 ): Promise<ApiResult<UsersResponse>> {
-  return apiGet(config, "/users", { query: { ...params }, schema: usersResponse });
+  return apiGet(config, "/users", {
+    query: { ...params },
+    schema: usersResponse,
+  });
 }
 
 /** PUT /users/{id} — Updates a user. */

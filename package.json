@@ -11,6 +11,7 @@
   "version": "0.1.11",
   "devDependencies": {
     "@types/bun": "latest",
+    "prettier": "^3.8.3",
     "vitest": "^4.1.7"
   },
   "peerDependencies": {
@@ -18,7 +19,9 @@
   },
   "scripts": {
     "compile": "tsc -p tsconfig.build.json",
+    "test:script": "bun run ./scripts/test.ts",
     "test": "vitest run",
+    "format": "prettier --write .",
     "update": "./script.sh"
   },
   "files": [
