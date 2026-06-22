@@ -19,6 +19,7 @@
   },
   "scripts": {
     "compile": "tsc -p tsconfig.build.json",
+    "test:script": "bun run ./scripts/test.ts",
     "test": "vitest run",
     "format": "prettier --write .",
     "update": "./script.sh"

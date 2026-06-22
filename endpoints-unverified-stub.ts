@@ -222,60 +222,12 @@ export function createEventAttendance(
  * Event RSVPs
  * ------------------------------------------------------------------ */
 
-export interface ListEventRsvpsParams extends ListParams {
-  event_id?: number;
-}
-
-export interface EventRsvpCreate {
-  event_id: number;
-  event_session_id: number;
-  user_id?: number;
-  is_attending: "yes" | "no" | "maybe";
-  is_confirmed?: boolean;
-  agent_user_id: number | null;
-  source?: string | null;
-  source_system?: string | null;
-}
-
-export interface EventRsvpUpdate {
-  is_attending?: "yes" | "no" | "maybe";
-  is_confirmed?: boolean;
-  agent_user_id?: number | null;
-  source?: string | null;
-  source_system?: string | null;
-}
-
-/** GET /event_rsvps — Lists event rsvps. */
-export function listEventRsvps(
-  config: ClientConfig,
-  params: ListEventRsvpsParams = {},
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, "/event_rsvps", { query: { ...params } });
-}
-
-/** POST /event_rsvps — Creates an event rsvp. */
-export function createEventRsvp(
-  config: ClientConfig,
-  body: EventRsvpCreate,
-): Promise<ApiResult<unknown>> {
-  return apiPost(config, "/event_rsvps", { body });
-}
-
 /** GET /event_rsvps/{id} — Shows a single event rsvp. */
 export function getEventRsvp(
   config: ClientConfig,
   id: number,
 ): Promise<ApiResult<unknown>> {
   return apiGet(config, `/event_rsvps/${id}`);
-}
-
-/** PUT /event_rsvps/{id} — Updates an event rsvp. */
-export function updateEventRsvp(
-  config: ClientConfig,
-  id: number,
-  body: EventRsvpUpdate,
-): Promise<ApiResult<unknown>> {
-  return apiPut(config, `/event_rsvps/${id}`, { body });
 }
 
 /** DELETE /event_rsvps/{id} — Deletes an event rsvp. */
@@ -780,44 +732,6 @@ export function listTexts(
 }
 
 /* ------------------------------------------------------------------ *
- * User Actions
- * ------------------------------------------------------------------ */
-
-export interface UserActionData {
-  phone_number?: string | null;
-  email?: string | null;
-  first_name?: string | null;
-  last_name?: string | null;
-  preferred_language?: string | null;
-  second_language?: string | null;
-  chapter_id?: number | null;
-  address?: Address | null;
-  sms_permission?: boolean | null;
-  call_permission?: boolean | null;
-  email_permission?: boolean | null;
-  custom_user_properties?: Record<string, string> | null;
-}
-
-/**
- * Body for POST /user_actions. `page_id` is required; supply either an existing
- * `user_id` or a `data` object that identifies the user by phone number/email.
- */
-export interface UserActionCreate {
-  page_id: number;
-  user_id?: number | null;
-  created_at?: number | null;
-  data?: UserActionData;
-}
-
-/** POST /user_actions — Creates a user action. */
-export function createUserAction(
-  config: ClientConfig,
-  body: UserActionCreate,
-): Promise<ApiResult<unknown>> {
-  return apiPost(config, "/user_actions", { body });
-}
-
-/* ------------------------------------------------------------------ *
  * User Lists
  * ------------------------------------------------------------------ */
 
@@ -859,25 +773,6 @@ export function createUserNote(
  * Users
  * ------------------------------------------------------------------ */
 
-/**
- * Body for POST /users. The API requires at least one of `phone_number` or
- * `email` to identify the user.
- */
-export interface UserCreate {
-  phone_number?: string | null;
-  email?: string | null;
-  first_name?: string | null;
-  last_name?: string | null;
-  preferred_language?: string;
-  second_language?: string | null;
-  chapter_id?: number | null;
-  custom_user_properties?: Record<string, string> | null;
-  address?: Address | null;
-  sms_permission?: boolean | null;
-  call_permission?: boolean | null;
-  email_permission?: boolean | null;
-}
-
 export interface UserUpdate {
   phone_number?: string | null;
   email?: string | null;
@@ -891,14 +786,6 @@ export interface UserUpdate {
   sms_permission?: boolean | null;
   call_permission?: boolean | null;
   email_permission?: boolean | null;
-}
-
-/** POST /users — Creates or updates a user. */
-export function createUser(
-  config: ClientConfig,
-  body: UserCreate,
-): Promise<ApiResult<unknown>> {
-  return apiPost(config, "/users", { body });
 }
 
 /** GET /users — Retrieves a list of users. */
