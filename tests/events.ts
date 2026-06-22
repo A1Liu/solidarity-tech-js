@@ -10,7 +10,8 @@ describe("eventsResponse schema", () => {
 
   it("parses a JSON-stringified components array into structured components", () => {
     const parsed = eventsResponse.parse(sample);
-    const components = parsed.data[0].event_sessions[1].location_data?.components;
+    const components =
+      parsed.data[0].event_sessions[1].location_data?.components;
     expect(Array.isArray(components)).toBe(true);
     expect(components?.[0]).toEqual({
       long_name: "Dekalb Avenue &",
@@ -22,7 +23,8 @@ describe("eventsResponse schema", () => {
 
   it("normalizes object coordinates into { lat, lng }", () => {
     const parsed = eventsResponse.parse(sample);
-    const coordinates = parsed.data[0].event_sessions[1].location_data?.coordinates;
+    const coordinates =
+      parsed.data[0].event_sessions[1].location_data?.coordinates;
     expect(coordinates).toEqual({ lat: 40.6914322, lng: -73.975246 });
   });
 
