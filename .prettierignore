@@ -4,5 +4,4 @@ bun.lock
 node_modules
 dist
 .git
-endpoints-unverified-stub.*
 windmill
