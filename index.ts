@@ -26,7 +26,7 @@ type Bound<F> = F extends (config: ClientConfig, ...args: infer A) => infer R
   : never;
 
 /** All endpoint functions with their leading `ClientConfig` argument bound. */
-export type SolidarityClient = {
+export type StClient = {
   [K in keyof typeof Endpoints]: Bound<(typeof Endpoints)[K]>;
 };
 
@@ -39,13 +39,13 @@ export type SolidarityClient = {
  * const res = await client.listUsers({ _limit: 50 });
  * ```
  */
-export function createClient(config: ClientConfig): SolidarityClient {
+export function createClient(config: ClientConfig): StClient {
   const bound: Record<string, unknown> = {};
   for (const [name, fn] of Object.entries(Endpoints)) {
     bound[name] = (...args: unknown[]) =>
       (fn as EndpointFn)(config, ...(args as never[]));
   }
-  return bound as SolidarityClient;
+  return bound as StClient;
 }
 
 export default createClient;

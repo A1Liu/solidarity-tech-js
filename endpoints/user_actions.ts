@@ -3,7 +3,7 @@ import { apiPost } from "../client";
 import type { ApiResult, ClientConfig } from "../client";
 import type { Address } from "../schemas";
 
-export interface UserActionData {
+export interface StUserActionData {
   phone_number?: string | null;
   email?: string | null;
   first_name?: string | null;
@@ -22,27 +22,27 @@ export interface UserActionData {
  * Body for POST /user_actions. `page_id` is required; supply either an existing
  * `user_id` or a `data` object that identifies the user by phone number/email.
  */
-export interface UserActionCreate {
+export interface StUserActionCreate {
   page_id: number;
   user_id?: number | null;
   created_at?: number | null;
-  data?: UserActionData;
+  data?: StUserActionData;
 }
 
-const CreateUserActionSchema = z.object({
+const StCreateUserActionSchema = z.object({
   id: z.number(),
   message: z.string(),
 });
 
-export type CreateUserAction = z.infer<typeof CreateUserActionSchema>;
+export type StCreateUserAction = z.infer<typeof StCreateUserActionSchema>;
 
 /** POST /user_actions — Creates a user action. */
 export function createUserAction(
   config: ClientConfig,
-  body: UserActionCreate,
+  body: StUserActionCreate,
 ): Promise<ApiResult<unknown>> {
   return apiPost(config, "/user_actions", {
     body,
-    schema: CreateUserActionSchema,
+    schema: StCreateUserActionSchema,
   });
 }

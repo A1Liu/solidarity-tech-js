@@ -7,7 +7,7 @@ import type { Address } from "../schemas";
  * Body for POST /users. The API requires at least one of `phone_number` or
  * `email` to identify the user.
  */
-export interface UserCreate {
+export interface StUserCreate {
   phone_number?: string | null;
   email?: string | null;
   first_name?: string | null;
@@ -22,14 +22,14 @@ export interface UserCreate {
   email_permission?: boolean | null;
 }
 
-const PostUserResultSchema = z.object({ id: z.number(), message: z.string() });
+const StPostUserResultSchema = z.object({ id: z.number(), message: z.string() });
 
-export type StUserCreateResponse = z.infer<typeof PostUserResultSchema>;
+export type StUserCreateResponse = z.infer<typeof StPostUserResultSchema>;
 
 /** POST /users — Creates or updates a user. */
 export function createUser(
   config: ClientConfig,
-  body: UserCreate,
+  body: StUserCreate,
 ): Promise<ApiResult<unknown>> {
-  return apiPost(config, "/users", { body, schema: PostUserResultSchema });
+  return apiPost(config, "/users", { body, schema: StPostUserResultSchema });
 }

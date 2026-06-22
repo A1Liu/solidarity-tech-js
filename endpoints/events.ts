@@ -9,7 +9,7 @@ import type { ListParams } from "../schemas";
  * ------------------------------------------------------------------ */
 
 /** Parsed `{lng, lat}` pair. */
-export const stCoordinates = z.object({
+export const StCoordinates = z.object({
   lng: z.number(),
   lat: z.number(),
 });
@@ -18,13 +18,13 @@ export const stCoordinates = z.object({
 // string (when ungeocoded), a JSON-stringified `{lng, lat}`, or null/absent.
 // Normalize all of those into a `StCoordinates | null`.
 const coordinatesField = z
-  .union([stCoordinates, z.string(), z.null()])
+  .union([StCoordinates, z.string(), z.null()])
   .optional()
-  .transform((val): z.infer<typeof stCoordinates> | null => {
+  .transform((val): z.infer<typeof StCoordinates> | null => {
     if (val == null || val === "") return null;
     if (typeof val === "string") {
       try {
-        const parsed = stCoordinates.safeParse(JSON.parse(val));
+        const parsed = StCoordinates.safeParse(JSON.parse(val));
         return parsed.success ? parsed.data : null;
       } catch {
         return null;
@@ -34,13 +34,13 @@ const coordinatesField = z
   });
 
 /** A single Google-style address component. */
-export const stAddressComponent = z.object({
+export const StAddressComponent = z.object({
   long_name: z.string(),
   short_name: z.string(),
   types: z.array(z.string()),
 });
 
-const componentsArray = z.array(stAddressComponent);
+const componentsArray = z.array(StAddressComponent);
 
 // The raw API sends `components` as a JSON-stringified array of address
 // components, an empty string (when none), an already-parsed array, or
@@ -48,7 +48,7 @@ const componentsArray = z.array(stAddressComponent);
 const componentsField = z
   .union([z.array(z.unknown()), z.string(), z.null()])
   .optional()
-  .transform((val): z.infer<typeof stAddressComponent>[] | null => {
+  .transform((val): z.infer<typeof StAddressComponent>[] | null => {
     if (val == null || val === "") return null;
     if (typeof val === "string") {
       try {
@@ -62,7 +62,7 @@ const componentsField = z
     return parsed.success ? parsed.data : null;
   });
 
-export const stLocationData = z.object({
+export const StLocationData = z.object({
   components: componentsField,
   coordinates: coordinatesField,
   address_city: z.string().optional(),
@@ -73,7 +73,7 @@ export const stLocationData = z.object({
   address_postal_code: z.string().optional(),
 });
 
-export const stEventSession = z.object({
+export const StEventSession = z.object({
   id: z.number().int(),
   mobilize_event_id: z.number().int(),
   primary_session_id: z.number().int(),
@@ -83,7 +83,7 @@ export const stEventSession = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   location_name: z.string().nullable(),
-  location_data: stLocationData.nullable(),
+  location_data: StLocationData.nullable(),
   // PostGIS WKT `POINT (lon lat)` — note lon first. Null when ungeocoded.
   lonlat: z.string().nullable(),
   location_address: z.string().nullable(),
@@ -109,7 +109,7 @@ export const stEventSession = z.object({
 });
 
 /** Per-event toggles for the automated RSVP/reminder messages. */
-export const stEventAutomationStatus = z.object({
+export const StEventAutomationStatus = z.object({
   rsvp_confirmation_email: z.boolean(),
   rsvp_confirmation_text: z.boolean(),
   day_before_email_reminder: z.boolean(),
@@ -118,41 +118,41 @@ export const stEventAutomationStatus = z.object({
   day_of_text_reminder: z.boolean(),
 });
 
-export const stEvent = z.object({
+export const StEvent = z.object({
   id: z.number().int(),
   title: z.string(),
   scope_id: z.number().int(),
   scope_type: z.string(),
   event_type: z.string(),
   location_name: z.string().nullable(),
-  location_data: stLocationData.nullable(),
+  location_data: StLocationData.nullable(),
   tags: z.array(z.string()),
   campaign_tags: z.array(z.string()),
-  event_sessions: z.array(stEventSession),
+  event_sessions: z.array(StEventSession),
   event_page_url: z.string().nullable(),
   event_page_id: z.number().int().nullable(),
   image_url: z.string().nullable(),
   description: z.string().nullable(),
   hide_address_until_rsvp: z.boolean(),
   show_in_web_calendars: z.boolean(),
-  automation_status: stEventAutomationStatus,
+  automation_status: StEventAutomationStatus,
   primary_event_id: z.number().int(),
   is_co_hosted_mirror: z.boolean(),
   created_at: z.string(),
 });
 
-export const eventsResponse = z.object({
-  data: z.array(stEvent),
+export const StEventsResponse = z.object({
+  data: z.array(StEvent),
   meta: paginationMeta,
 });
 
-export type StCoordinates = z.infer<typeof stCoordinates>;
-export type StAddressComponent = z.infer<typeof stAddressComponent>;
-export type StLocationData = z.infer<typeof stLocationData>;
-export type StEventSession = z.infer<typeof stEventSession>;
-export type StEventAutomationStatus = z.infer<typeof stEventAutomationStatus>;
-export type StEvent = z.infer<typeof stEvent>;
-export type EventsResponse = z.infer<typeof eventsResponse>;
+export type StCoordinates = z.infer<typeof StCoordinates>;
+export type StAddressComponent = z.infer<typeof StAddressComponent>;
+export type StLocationData = z.infer<typeof StLocationData>;
+export type StEventSession = z.infer<typeof StEventSession>;
+export type StEventAutomationStatus = z.infer<typeof StEventAutomationStatus>;
+export type StEvent = z.infer<typeof StEvent>;
+export type StEventsResponse = z.infer<typeof StEventsResponse>;
 
 /* ------------------------------------------------------------------ *
  * Events
@@ -162,10 +162,10 @@ export type EventsResponse = z.infer<typeof eventsResponse>;
 export function listEvents(
   config: ClientConfig,
   params: ListParams = {},
-): Promise<ApiResult<EventsResponse>> {
+): Promise<ApiResult<StEventsResponse>> {
   return apiGet(config, "/events", {
     query: { ...params },
-    schema: eventsResponse,
+    schema: StEventsResponse,
   });
 }
 

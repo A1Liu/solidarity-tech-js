@@ -9,12 +9,12 @@ export const StIsAttendingSchema = z.union([
   z.literal("maybe"),
 ]);
 
-export interface ListEventRsvpsParams extends ListParams {
+export interface StListEventRsvpsParams extends ListParams {
   event_id?: number;
   session_id?: number;
 }
 
-export interface EventRsvpCreate {
+export interface StEventRsvpCreate {
   event_id: number;
   event_session_id: number;
   user_id: number;
@@ -25,7 +25,7 @@ export interface EventRsvpCreate {
   source_system?: string | null;
 }
 
-export interface EventRsvpUpdate {
+export interface StEventRsvpUpdate {
   is_attending?: "yes" | "no" | "maybe";
   is_confirmed?: boolean;
   agent_user_id?: number | null;
@@ -61,11 +61,11 @@ const StEventRsvpSchema = z.object({
   updated_at: z.string(),
 });
 
-const CreateEventRsvpsResponseSchema = z.object({
+const StCreateEventRsvpsResponseSchema = z.object({
   data: StEventRsvpSchema,
 });
 
-const ListEventRsvpsResponseSchema = z.object({
+const StListEventRsvpsResponseSchema = z.object({
   meta: paginationMeta,
   data: StEventRsvpSchema.array(),
 });
@@ -73,32 +73,32 @@ const ListEventRsvpsResponseSchema = z.object({
 export type StEventRsvp = z.infer<typeof StEventRsvpSchema>;
 
 export type StCreateEventRsvpsResponse = z.infer<
-  typeof CreateEventRsvpsResponseSchema
+  typeof StCreateEventRsvpsResponseSchema
 >;
 
 export type StListEventRsvpsResponse = z.infer<
-  typeof ListEventRsvpsResponseSchema
+  typeof StListEventRsvpsResponseSchema
 >;
 
 /** POST /event_rsvps — Creates an event rsvp. */
 export function createEventRsvp(
   config: ClientConfig,
-  body: EventRsvpCreate,
+  body: StEventRsvpCreate,
 ): Promise<ApiResult<StCreateEventRsvpsResponse>> {
   return apiPost(config, "/event_rsvps", {
     body,
-    schema: CreateEventRsvpsResponseSchema,
+    schema: StCreateEventRsvpsResponseSchema,
   });
 }
 
 /** GET /event_rsvps — Lists event rsvps. */
 export function listEventRsvps(
   config: ClientConfig,
-  params: ListEventRsvpsParams = {},
+  params: StListEventRsvpsParams = {},
 ): Promise<ApiResult<StListEventRsvpsResponse>> {
   return apiGet(config, "/event_rsvps", {
     query: { ...params },
-    schema: ListEventRsvpsResponseSchema,
+    schema: StListEventRsvpsResponseSchema,
   });
 }
 
@@ -106,10 +106,10 @@ export function listEventRsvps(
 export function updateEventRsvp(
   config: ClientConfig,
   id: number,
-  body: EventRsvpUpdate,
+  body: StEventRsvpUpdate,
 ): Promise<ApiResult<StCreateEventRsvpsResponse>> {
   return apiPut(config, `/event_rsvps/${id}`, {
     body,
-    schema: CreateEventRsvpsResponseSchema,
+    schema: StCreateEventRsvpsResponseSchema,
   });
 }
