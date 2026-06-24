@@ -32,6 +32,7 @@ export interface ApiSuccess<T> {
   ok: true;
   status: number;
   data: T;
+  error?: undefined;
 }
 
 /** A non-2xx response, a network failure, or a body that failed validation. */

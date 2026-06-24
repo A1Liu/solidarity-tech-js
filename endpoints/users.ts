@@ -30,6 +30,6 @@ export type StUserCreateResponse = z.infer<typeof StPostUserResultSchema>;
 export function createUser(
   config: ClientConfig,
   body: StUserCreate,
-): Promise<ApiResult<unknown>> {
+): Promise<ApiResult<StUserCreateResponse>> {
   return apiPost(config, "/users", { body, schema: StPostUserResultSchema });
 }
