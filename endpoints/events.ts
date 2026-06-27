@@ -100,7 +100,7 @@ export const StEventSession = z.object({
   zoom_attendance_synced_at: z.string().nullable(),
   source_calendar_item_id: z.number().int().nullable(),
   paired_meci_id: z.number().int().nullable(),
-  recurring_schedule_id: z.number().int().nullable(),
+  recurring_schedule_id: z.string().nullable(),
   mobilize_event_task_id: z.number().int().nullable(),
   rsvp_count: z.number().int(),
   attendance_count: z.number().int(),
