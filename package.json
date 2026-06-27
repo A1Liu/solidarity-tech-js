@@ -8,7 +8,7 @@
       "default": "./dist/index.js"
     }
   },
-  "version": "0.1.13",
+  "version": "0.1.14",
   "devDependencies": {
     "@types/bun": "latest",
     "prettier": "^3.8.3",
