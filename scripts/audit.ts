@@ -23,7 +23,7 @@ import type { ZodType } from "zod";
 import { createClient } from "../index";
 import { apiGet } from "../client";
 import type { ApiResult, ClientConfig } from "../client";
-import { UNCOVERED, shapeDiff, pickElement, typeName } from "./schema-coverage";
+import { UNCOVERED, shapeDiff, pickElement } from "./schema-coverage";
 import {
   activitiesResponse,
   callsResponse,
@@ -125,25 +125,15 @@ async function checkList({
   resource,
   expected,
 }: ListEndpoint): Promise<CoverageResult> {
-  let body: unknown;
-  try {
-    const res = await apiGet(config, `/${resource}`, { query: listQuery });
-    if (!res.ok)
-      return { label: resource, covered: false, reason: res.error.message };
-    body = res.data;
-  } catch (cause) {
-    return {
-      label: resource,
-      covered: false,
-      reason: cause instanceof Error ? cause.message : String(cause),
-    };
-  }
+  const res = await apiGet(config, `/${resource}`, { query: listQuery });
+  if (!res.ok)
+    return { label: resource, covered: false, reason: res.error.message };
 
-  const rows = (body as { data?: unknown })?.data;
+  const rows = (res.data as { data?: unknown })?.data;
   if (!Array.isArray(rows) || rows.length === 0)
     return { label: resource, covered: false, reason: "no rows to sample" };
 
-  return classify(resource, expected, shapeDiff(expected, body));
+  return classify(resource, expected, shapeDiff(expected, res.data));
 }
 
 /* ------------------------------------------------------------------ *
