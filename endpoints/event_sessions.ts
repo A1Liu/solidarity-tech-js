@@ -47,24 +47,58 @@ export type StEventSessionMutationResponse = z.infer<
   typeof StEventSessionMutationResponse
 >;
 
+/**
+ * GET /event_sessions?count=true envelope. With `count` set the endpoint drops
+ * the list/`meta` entirely and returns just a total, per the live audit.
+ */
+export const StEventSessionCountResponse = z.object({
+  count: z.number().int(),
+});
+
+export type StEventSessionCountResponse = z.infer<
+  typeof StEventSessionCountResponse
+>;
+
 /* ------------------------------------------------------------------ *
  * Request shapes
  * ------------------------------------------------------------------ */
 
+/** In-person sessions carry an address; virtual ones carry a meeting link. */
+export type EventSessionType = "virtual" | "in_person";
+
 export interface ListEventSessionsParams extends ListParams {
   event_id?: number;
+  /** Only sessions whose start time is in the future. */
+  upcoming?: boolean;
+  /** Unix seconds — only sessions starting at/after this time. */
+  starts_after?: number;
+  /** Unix seconds — only sessions starting at/before this time. */
+  starts_before?: number;
+  chapter_id?: number;
+  /** Comma-separated event tags to filter by. */
+  event_tags?: string;
+  /** Populate each session's `rsvp_counts`. */
+  include_rsvp_counts?: boolean;
+  /** Populate each session's `confirmed_counts`. */
+  include_confirmed_counts?: boolean;
+  /** Populate each session's `hosts`. */
+  include_hosts?: boolean;
 }
 
 export interface EventSessionCreate {
   event_id: number;
   start_time: number | null;
   end_time: number | null;
+  event_type?: EventSessionType | null;
   title?: string | null;
   location_name?: string | null;
   location_data?: EventLocationData;
   location_address?: string | null;
   show_rsvp_bar?: boolean | null;
   show_title_in_form?: boolean | null;
+  note?: string | null;
+  max_capacity?: number | null;
+  tags?: string[];
 }
 
 export interface EventSessionUpdate {
@@ -72,9 +106,13 @@ export interface EventSessionUpdate {
   end_time?: number | null;
   title?: string | null;
   location_name?: string | null;
+  location_data?: EventLocationData;
   location_address?: string | null;
   show_rsvp_bar?: boolean | null;
   show_title_in_form?: boolean | null;
+  note?: string | null;
+  max_capacity?: number | null;
+  tags?: string[];
 }
 
 /* ------------------------------------------------------------------ *
@@ -89,6 +127,20 @@ export function listEventSessions(
   return apiGet(config, "/event_sessions", {
     query: { ...params },
     schema: StEventSessionsResponse,
+  });
+}
+
+/**
+ * GET /event_sessions?count=true — Returns the number of matching sessions
+ * instead of the list. Accepts the same filters as {@link listEventSessions}.
+ */
+export function countEventSessions(
+  config: ClientConfig,
+  params: Omit<ListEventSessionsParams, "_limit" | "_offset"> = {},
+): Promise<ApiResult<StEventSessionCountResponse>> {
+  return apiGet(config, "/event_sessions", {
+    query: { ...params, count: true },
+    schema: StEventSessionCountResponse,
   });
 }
 

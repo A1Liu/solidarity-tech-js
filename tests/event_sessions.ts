@@ -3,6 +3,7 @@ import { faker } from "@faker-js/faker";
 import {
   StEventSessionsResponse,
   StEventSessionResponse,
+  StEventSessionCountResponse,
 } from "../endpoints/event_sessions";
 
 // Deterministic data: seed before each test so a failure reproduces exactly.
@@ -150,6 +151,22 @@ describe("StEventSessionResponse", () => {
       data: rawSession(),
       meta: { total_count: 1, limit: 1, offset: 0 },
     });
+    expect(result.success).toBe(true);
+  });
+
+  it("parses the include_* fields (hosts/rsvp_counts/confirmed_counts) when present", () => {
+    const result = StEventSessionsResponse.safeParse(
+      rawResponse([
+        rawSession({ hosts: [], rsvp_counts: {}, confirmed_counts: {} }),
+      ]),
+    );
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("StEventSessionCountResponse", () => {
+  it("parses a count=true envelope green", () => {
+    const result = StEventSessionCountResponse.safeParse({ count: 37 });
     expect(result.success).toBe(true);
   });
 });
