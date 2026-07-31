@@ -3,6 +3,7 @@ import type { ClientConfig } from "./client";
 import * as coreEndpoints from "./endpoints-unverified-stub";
 
 import * as eventEndpoints from "./endpoints/events";
+import * as eventSessionEndpoints from "./endpoints/event_sessions";
 import * as userEndpoints from "./endpoints/users";
 import * as userActionsEndpoints from "./endpoints/user_actions";
 import * as rsvpEndpoints from "./endpoints/rsvps";
@@ -14,6 +15,7 @@ export const Endpoints = {
   ...coreEndpoints,
 
   ...eventEndpoints,
+  ...eventSessionEndpoints,
   ...userEndpoints,
   ...rsvpEndpoints,
   ...userActionsEndpoints,
@@ -52,3 +54,4 @@ export default createClient;
 
 export type * from "./endpoints-unverified-stub";
 export type * from "./endpoints/events";
+export type * from "./endpoints/event_sessions";

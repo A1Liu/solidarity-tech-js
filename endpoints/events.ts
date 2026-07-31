@@ -102,6 +102,8 @@ export const StEventSession = z.object({
   paired_meci_id: z.number().int().nullable(),
   recurring_schedule_id: z.string().nullable(),
   mobilize_event_task_id: z.number().int().nullable(),
+  // Always empty in captured responses, so the element type is unverified.
+  host_user_ids: z.array(z.unknown()),
   rsvp_count: z.number().int(),
   attendance_count: z.number().int(),
   host_tools_url: z.string(),
@@ -138,6 +140,8 @@ export const StEvent = z.object({
   automation_status: StEventAutomationStatus,
   primary_event_id: z.number().int(),
   is_co_hosted_mirror: z.boolean(),
+  // Always empty in captured responses, so the element type is unverified.
+  internal_co_host_chapters: z.array(z.unknown()),
   created_at: z.string(),
 });
 
