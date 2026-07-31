@@ -60,28 +60,6 @@ interface CoverageResult {
   mismatches?: string[];
 }
 
-/** Fold a `shapeDiff` and its schema into a labelled coverage line. */
-function classify(
-  label: string,
-  expected: ZodType,
-  diff: ReturnType<typeof shapeDiff>,
-): CoverageResult {
-  if (diff.covered) return { label, covered: true, reason: "" };
-  const reason =
-    expected === UNCOVERED
-      ? "no schema yet"
-      : diff.mismatches.length
-        ? "schema no longer matches the live response"
-        : "live response has keys the schema omits";
-  return {
-    label,
-    covered: false,
-    reason,
-    keys: diff.missingFromSchema,
-    mismatches: diff.mismatches,
-  };
-}
-
 /* ------------------------------------------------------------------ *
  * Reads — one GET per list endpoint
  * ------------------------------------------------------------------ */
@@ -126,14 +104,12 @@ async function checkList({
   expected,
 }: ListEndpoint): Promise<CoverageResult> {
   const res = await apiGet(config, `/${resource}`, { query: listQuery });
-  if (!res.ok)
-    return { label: resource, covered: false, reason: res.error.message };
-
-  const rows = (res.data as { data?: unknown })?.data;
-  if (!Array.isArray(rows) || rows.length === 0)
-    return { label: resource, covered: false, reason: "no rows to sample" };
-
-  return classify(resource, expected, shapeDiff(expected, res.data));
+  if (res.ok) {
+    const rows = (res.data as { data?: unknown })?.data;
+    if (!Array.isArray(rows) || rows.length === 0)
+      return { label: resource, covered: false, reason: "no rows to sample" };
+  }
+  return evaluate(resource, res, expected);
 }
 
 /* ------------------------------------------------------------------ *
@@ -168,7 +144,22 @@ function evaluate(
       covered: false,
       reason: `request failed — ${result.error.type}: ${result.error.message}`,
     };
-  return classify(label, expected, shapeDiff(expected, result.data));
+
+  const diff = shapeDiff(expected, result.data);
+  if (diff.covered) return { label, covered: true, reason: "" };
+  const reason =
+    expected === UNCOVERED
+      ? "no schema yet"
+      : diff.mismatches.length
+        ? "schema no longer matches the live response"
+        : "live response has keys the schema omits";
+  return {
+    label,
+    covered: false,
+    reason,
+    keys: diff.missingFromSchema,
+    mismatches: diff.mismatches,
+  };
 }
 
 async function runCase(mutation: MutationCase): Promise<CoverageResult[]> {
