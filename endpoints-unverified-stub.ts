@@ -18,7 +18,6 @@ import type {
   ListParams,
   ScopeType,
   Address,
-  EventLocationData,
 } from "./schemas";
 
 /* ------------------------------------------------------------------ *
@@ -236,77 +235,6 @@ export function deleteEventRsvp(
   id: number,
 ): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/event_rsvps/${id}`);
-}
-
-/* ------------------------------------------------------------------ *
- * Event Sessions
- * ------------------------------------------------------------------ */
-
-export interface ListEventSessionsParams extends ListParams {
-  event_id?: number;
-}
-
-export interface EventSessionCreate {
-  event_id: number;
-  start_time: number | null;
-  end_time: number | null;
-  title?: string | null;
-  location_name?: string | null;
-  location_data?: EventLocationData;
-  location_address?: string | null;
-  show_rsvp_bar?: boolean | null;
-  show_title_in_form?: boolean | null;
-}
-
-export interface EventSessionUpdate {
-  start_time?: number | null;
-  end_time?: number | null;
-  title?: string | null;
-  location_name?: string | null;
-  location_address?: string | null;
-  show_rsvp_bar?: boolean | null;
-  show_title_in_form?: boolean | null;
-}
-
-/** GET /event_sessions — Lists event sessions. */
-export function listEventSessions(
-  config: ClientConfig,
-  params: ListEventSessionsParams = {},
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, "/event_sessions", { query: { ...params } });
-}
-
-/** POST /event_sessions — Creates an event session. */
-export function createEventSession(
-  config: ClientConfig,
-  body: EventSessionCreate,
-): Promise<ApiResult<unknown>> {
-  return apiPost(config, "/event_sessions", { body });
-}
-
-/** GET /event_sessions/{id} — Shows a single event session. */
-export function getEventSession(
-  config: ClientConfig,
-  id: number,
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, `/event_sessions/${id}`);
-}
-
-/** PUT /event_sessions/{id} — Updates an event session. */
-export function updateEventSession(
-  config: ClientConfig,
-  id: number,
-  body: EventSessionUpdate,
-): Promise<ApiResult<unknown>> {
-  return apiPut(config, `/event_sessions/${id}`, { body });
-}
-
-/** DELETE /event_sessions/{id} — Deletes an event session. */
-export function deleteEventSession(
-  config: ClientConfig,
-  id: number,
-): Promise<ApiResult<unknown>> {
-  return apiDelete(config, `/event_sessions/${id}`);
 }
 
 /* ------------------------------------------------------------------ *

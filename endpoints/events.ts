@@ -102,10 +102,17 @@ export const StEventSession = z.object({
   paired_meci_id: z.number().int().nullable(),
   recurring_schedule_id: z.string().nullable(),
   mobilize_event_task_id: z.number().int().nullable(),
+  // Always empty in captured responses, so the element type is unverified.
+  host_user_ids: z.array(z.unknown()),
   rsvp_count: z.number().int(),
   attendance_count: z.number().int(),
   host_tools_url: z.string(),
   city_state_label: z.string().nullable(),
+  // Present on GET /event_sessions only when the matching `include_*` query
+  // param is set; empty in captured responses, so element types are unverified.
+  hosts: z.array(z.unknown()).optional(),
+  rsvp_counts: z.record(z.string(), z.unknown()).optional(),
+  confirmed_counts: z.record(z.string(), z.unknown()).optional(),
 });
 
 /** Per-event toggles for the automated RSVP/reminder messages. */
@@ -135,9 +142,14 @@ export const StEvent = z.object({
   description: z.string().nullable(),
   hide_address_until_rsvp: z.boolean(),
   show_in_web_calendars: z.boolean(),
+  // Null in every captured response, so the non-null type is unverified.
+  accessibility_info: z.string().nullable(),
+  waitlist_enabled: z.boolean(),
   automation_status: StEventAutomationStatus,
   primary_event_id: z.number().int(),
   is_co_hosted_mirror: z.boolean(),
+  // Always empty in captured responses, so the element type is unverified.
+  internal_co_host_chapters: z.array(z.unknown()),
   created_at: z.string(),
 });
 

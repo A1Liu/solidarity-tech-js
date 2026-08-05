@@ -21,6 +21,22 @@ export const userAddress = z.object({
   state: z.string().nullable(),
   zip_code: z.string().nullable(),
   country: z.string().nullable(),
+  // Null in every captured address, so the non-null type is unverified.
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
+});
+
+/**
+ * Cursor-paginated `meta`. GET /activities streams by cursor, so `total_count`
+ * is null and cursor tokens accompany it — unlike the offset {@link paginationMeta}.
+ */
+export const cursorMeta = z.object({
+  total_count: z.number().int().nullable(),
+  limit: z.number().int(),
+  offset: z.number().int(),
+  // Cursor tokens are numeric ids; null when there is no page in that direction.
+  cursor: z.number().int().nullable(),
+  next_cursor: z.number().int().nullable(),
 });
 
 // GET /activities
@@ -30,23 +46,14 @@ export const activity = z.object({
   name: z.string(),
   actionable_id: z.number().int(),
   actionable_type: z.string(),
-  action: z.object({
-    id: z.number().int(),
-    user_id: z.number().int(),
-    agent_user_id: z.number().int().nullable(),
-    field_type: z.string().nullable(),
-    old_value: z.string().nullable(),
-    new_value: z.string().nullable(),
-    data_import_id: z.number().int().nullable(),
-    created_at: z.string(),
-    updated_at: z.string(),
-  }),
+  // `action` is polymorphic: its shape depends on `actionable_type` (an email
+  // action, a field-change action, an RSVP, …), so the value type is left open.
+  action: z.record(z.string(), z.unknown()),
   created_at: z.string(),
-  updated_at: z.string(),
 });
 export const activitiesResponse = z.object({
   data: z.array(activity),
-  meta: paginationMeta,
+  meta: cursorMeta,
 });
 
 // GET /calls
@@ -74,6 +81,7 @@ export const chapter = z.object({
   logo_url: z.string().nullable(),
   organization_id: z.number().int(),
   chapter_phone_number: z.string(),
+  calendar_feed_url: z.string().nullable(),
 });
 export const chaptersResponse = z.object({
   data: z.array(chapter),
@@ -94,8 +102,12 @@ export const customUserProperty = z.object({
       }),
     )
     .nullable(),
+  required: z.boolean(),
+  label: z.string(),
+  description: z.string().nullable(),
   scope_id: z.number().int(),
   scope_type: z.enum(["Organization", "Chapter"]),
+  created_at: z.string(),
 });
 export const customUserPropertiesResponse = z.object({
   data: z.array(customUserProperty),
@@ -120,6 +132,9 @@ export const textsResponse = z.object({
 });
 
 // GET /users
+// NOTE: the test account holds a single user, so nullability of the fields that
+// were null/empty in that one row (alternate_name, date_of_birth, age, timezone,
+// assessment, and the empty arrays) is inferred defensively, not verified.
 export const user = z.object({
   id: z.number().int(),
   hash_id: z.string(),
@@ -127,16 +142,32 @@ export const user = z.object({
   email: z.string().nullable(),
   first_name: z.string().nullable(),
   last_name: z.string().nullable(),
+  alternate_name: z.string().nullable(),
+  date_of_birth: z.string().nullable(),
+  age: z.number().int().nullable(),
   preferred_language: z.string(),
   second_language: z.string().nullable(),
+  secondary_languages: z.array(z.string()),
   chapter_id: z.number().int(),
+  chapter_ids: z.array(z.number().int()),
   branch_id: z.number().int().nullable(),
   created_at: z.string(),
-  custom_user_properties: z.record(z.string(), z.string()),
+  updated_at: z.string(),
+  // Values are per-organization and not all strings (numbers, arrays, nulls all
+  // appear in the live audit), so the value type is left open.
+  custom_user_properties: z.record(z.string(), z.unknown()),
+  tags: z.array(z.string()),
+  referral_code: z.string(),
+  timezone: z.string().nullable(),
   address: userAddress,
+  // Shape unverified — null in every captured user.
+  assessment: z.unknown().nullable(),
   sms_permission: z.boolean(),
   call_permission: z.boolean(),
   email_permission: z.boolean(),
+  // Empty in every captured user, so element types are unverified.
+  other_emails: z.array(z.unknown()),
+  other_phone_numbers: z.array(z.unknown()),
 });
 export const usersResponse = z.object({
   data: z.array(user),
@@ -176,6 +207,7 @@ export interface EventLocationData {
   address_postal_code?: string | null;
 }
 
+export type CursorMeta = z.infer<typeof cursorMeta>;
 export type Activity = z.infer<typeof activity>;
 export type ActivitiesResponse = z.infer<typeof activitiesResponse>;
 export type Call = z.infer<typeof call>;
