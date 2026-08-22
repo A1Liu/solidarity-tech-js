@@ -1,0 +1,63 @@
+{
+  "data": [
+    {
+      "id": 1288,
+      "name": "utique talus quo",
+      "image_url": "utpote deorsum tutis voro synagoga calamitas",
+      "parent_organization_id": 1108,
+      "default_language": "cariosus",
+      "supported_languages": [
+        "creptio"
+      ],
+      "assessment_statuses": [
+        {
+          "key": "iure",
+          "color": "demulceo congregatio ago crudelis",
+          "label": "decor",
+          "description": "possimus curiositas certus brevis delibero neque usus tripudio"
+        },
+        {
+          "key": "vir",
+          "color": "desipio tui delicate acceptus",
+          "label": "molestiae advoco",
+          "description": "theatrum patrocinor tertius dolor toties thermae aestivus paulatim"
+        },
+        {
+          "key": "tabesco",
+          "color": "vomito denique trado spes",
+          "label": "texo conicio",
+          "description": "capto ante animi decipio atrocitas pariatur undique dolorem"
+        },
+        {
+          "key": "advoco",
+          "color": "viridis aestas turbo apostolus",
+          "label": "uredo",
+          "description": "cohors cogo caritas vesper casus comptus voluptates deserunt"
+        },
+        {
+          "key": "cultura",
+          "color": "angulus vomica vitium cibo",
+          "label": "valetudo",
+          "description": "sit degusto crebro sui caput addo nemo aestivus"
+        },
+        {
+          "key": "delibero",
+          "color": "urbs",
+          "label": "crapula",
+          "description": "crastinus vorax patria delicate utrimque alius"
+        },
+        {
+          "key": "",
+          "color": "stillicidium",
+          "label": "amissio fuga",
+          "description": ""
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "total_count": 1,
+    "limit": 25,
+    "offset": 0
+  }
+}

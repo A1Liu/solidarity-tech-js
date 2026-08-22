@@ -7,6 +7,9 @@ import * as eventSessionEndpoints from "./endpoints/event_sessions";
 import * as userEndpoints from "./endpoints/users";
 import * as userActionsEndpoints from "./endpoints/user_actions";
 import * as rsvpEndpoints from "./endpoints/rsvps";
+import * as agentAssignmentEndpoints from "./endpoints/agent_assignments";
+import * as organizationEndpoints from "./endpoints/organizations";
+import * as teamMemberEndpoints from "./endpoints/team_members";
 
 export * from "./client";
 export * from "./schemas";
@@ -19,6 +22,9 @@ export const Endpoints = {
   ...userEndpoints,
   ...rsvpEndpoints,
   ...userActionsEndpoints,
+  ...agentAssignmentEndpoints,
+  ...organizationEndpoints,
+  ...teamMemberEndpoints,
 } as const;
 
 type EndpointFn = (config: ClientConfig, ...args: never[]) => unknown;
@@ -55,3 +61,6 @@ export default createClient;
 export type * from "./endpoints-unverified-stub";
 export type * from "./endpoints/events";
 export type * from "./endpoints/event_sessions";
+export type * from "./endpoints/agent_assignments";
+export type * from "./endpoints/organizations";
+export type * from "./endpoints/team_members";

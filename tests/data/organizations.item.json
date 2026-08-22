@@ -1,0 +1,116 @@
+{
+  "data": {
+    "id": 1288,
+    "name": "utique talus quo",
+    "image_url": "utpote deorsum tutis voro synagoga calamitas",
+    "parent_organization_id": 1108,
+    "default_language": "cariosus",
+    "supported_languages": [
+      "creptio"
+    ],
+    "assessment_statuses": [
+      {
+        "key": "iure",
+        "color": "demulceo congregatio ago crudelis",
+        "label": "decor",
+        "description": "possimus curiositas certus brevis delibero neque usus tripudio"
+      },
+      {
+        "key": "vir",
+        "color": "desipio tui delicate acceptus",
+        "label": "molestiae advoco",
+        "description": "theatrum patrocinor tertius dolor toties thermae aestivus paulatim"
+      },
+      {
+        "key": "tabesco",
+        "color": "vomito denique trado spes",
+        "label": "texo conicio",
+        "description": "capto ante animi decipio atrocitas pariatur undique dolorem"
+      },
+      {
+        "key": "advoco",
+        "color": "viridis aestas turbo apostolus",
+        "label": "uredo",
+        "description": "cohors cogo caritas vesper casus comptus voluptates deserunt"
+      },
+      {
+        "key": "cultura",
+        "color": "angulus vomica vitium cibo",
+        "label": "valetudo",
+        "description": "sit degusto crebro sui caput addo nemo aestivus"
+      },
+      {
+        "key": "delibero",
+        "color": "urbs",
+        "label": "crapula",
+        "description": "crastinus vorax patria delicate utrimque alius"
+      },
+      {
+        "key": "",
+        "color": "stillicidium",
+        "label": "amissio fuga",
+        "description": ""
+      }
+    ],
+    "children": [],
+    "parent": {
+      "id": 1108,
+      "name": "ceno",
+      "image_url": "https://firsthand-handover.net/",
+      "parent_organization_id": null,
+      "default_language": "doloribus",
+      "supported_languages": [
+        "cur"
+      ],
+      "assessment_statuses": [
+        {
+          "key": "itaque",
+          "color": "appositus provident alter atqui",
+          "label": "natus",
+          "description": "solio vorax sint qui vindico caveo voluptatem recusandae"
+        },
+        {
+          "key": "bellum",
+          "color": "succedo ventus aspernatur eveniet",
+          "label": "debilito deserunt",
+          "description": "tabernus cattus cognomen villa barba verbera sum adimpleo"
+        },
+        {
+          "key": "vomica",
+          "color": "alo congregatio demo testimonium",
+          "label": "tempore claudeo",
+          "description": "demulceo adaugeo vox thymbra tergiversatio sum utor supra"
+        },
+        {
+          "key": "vesica",
+          "color": "varius denego ago aliqua",
+          "label": "statim",
+          "description": "patria cui commemoro conspergo expedita subiungo est in"
+        },
+        {
+          "key": "campana",
+          "color": "tabernus vereor ocer culpo",
+          "label": "desolo",
+          "description": "cursus careo absque validus alveus aranea auditor calcar"
+        },
+        {
+          "key": "via",
+          "color": "vinculum",
+          "label": "comprehendo",
+          "description": "nesciunt dolor vir vulgo desidero corroboro"
+        },
+        {
+          "key": "",
+          "color": "celebrer",
+          "label": "civitas conatus",
+          "description": ""
+        }
+      ]
+    }
+  },
+  "meta": {
+    "total_count": 1,
+    "limit": 1,
+    "offset": 0
+  }
+}

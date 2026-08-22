@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { ZodType } from "zod";
 
 /**
  * Zod schemas for the only endpoints whose responses are described with a body
@@ -12,6 +13,30 @@ export const paginationMeta = z.object({
   limit: z.number().int(),
   offset: z.number().int(),
 });
+
+/* ------------------------------------------------------------------ *
+ * Response envelopes
+ *
+ * The API wraps every resource in one of three envelopes, confirmed live
+ * across resources. Building them from an element schema keeps the split
+ * visible — in particular that a mutation carries no `meta`, which is easy to
+ * copy wrongly from the list schema next to it.
+ * ------------------------------------------------------------------ */
+
+/** `GET /things` — a page of elements. */
+export function listResponse<T extends ZodType>(element: T) {
+  return z.object({ data: z.array(element), meta: paginationMeta });
+}
+
+/** `GET /things/{id}` — one element, in the same envelope as the list. */
+export function itemResponse<T extends ZodType>(element: T) {
+  return z.object({ data: element, meta: paginationMeta });
+}
+
+/** `POST /things`, `PUT /things/{id}` — one element, and no pagination `meta`. */
+export function mutationResponse<T extends ZodType>(element: T) {
+  return z.object({ data: element });
+}
 
 /** Postal address embedded in a user record. */
 export const userAddress = z.object({
@@ -48,7 +73,8 @@ export const activity = z.object({
   actionable_type: z.string(),
   // `action` is polymorphic: its shape depends on `actionable_type` (an email
   // action, a field-change action, an RSVP, …), so the value type is left open.
-  action: z.record(z.string(), z.unknown()),
+  // Null for actionable types that carry no payload.
+  action: z.record(z.string(), z.unknown()).nullable(),
   created_at: z.string(),
 });
 export const activitiesResponse = z.object({
@@ -69,10 +95,7 @@ export const call = z.object({
   created_at: z.string(),
   ended_at: z.string(),
 });
-export const callsResponse = z.object({
-  data: z.array(call),
-  meta: paginationMeta,
-});
+export const callsResponse = listResponse(call);
 
 // GET /chapters
 export const chapter = z.object({
@@ -83,10 +106,7 @@ export const chapter = z.object({
   chapter_phone_number: z.string(),
   calendar_feed_url: z.string().nullable(),
 });
-export const chaptersResponse = z.object({
-  data: z.array(chapter),
-  meta: paginationMeta,
-});
+export const chaptersResponse = listResponse(chapter);
 
 // GET /custom_user_properties
 export const customUserProperty = z.object({
@@ -109,10 +129,7 @@ export const customUserProperty = z.object({
   scope_type: z.enum(["Organization", "Chapter"]),
   created_at: z.string(),
 });
-export const customUserPropertiesResponse = z.object({
-  data: z.array(customUserProperty),
-  meta: paginationMeta,
-});
+export const customUserPropertiesResponse = listResponse(customUserProperty);
 
 // GET /texts
 export const text = z.object({
@@ -126,10 +143,7 @@ export const text = z.object({
   twilio_error_code: z.number().int().nullable(),
   created_at: z.string(),
 });
-export const textsResponse = z.object({
-  data: z.array(text),
-  meta: paginationMeta,
-});
+export const textsResponse = listResponse(text);
 
 // GET /users
 // NOTE: the test account holds a single user, so nullability of the fields that
@@ -169,10 +183,7 @@ export const user = z.object({
   other_emails: z.array(z.unknown()),
   other_phone_numbers: z.array(z.unknown()),
 });
-export const usersResponse = z.object({
-  data: z.array(user),
-  meta: paginationMeta,
-});
+export const usersResponse = listResponse(user);
 
 /* ------------------------------------------------------------------ *
  * Shared request shapes

@@ -1,7 +1,8 @@
 import z from "zod";
 import { apiGet, apiPost, apiPut } from "../client";
 import type { ApiResult, ClientConfig } from "../client";
-import { paginationMeta, type ListParams } from "../schemas";
+import { listResponse, mutationResponse } from "../schemas";
+import type { ListParams } from "../schemas";
 
 export const StIsAttendingSchema = z.union([
   z.literal("yes"),
@@ -61,14 +62,9 @@ const StEventRsvpSchema = z.object({
   updated_at: z.string(),
 });
 
-const StCreateEventRsvpsResponseSchema = z.object({
-  data: StEventRsvpSchema,
-});
+const StCreateEventRsvpsResponseSchema = mutationResponse(StEventRsvpSchema);
 
-const StListEventRsvpsResponseSchema = z.object({
-  meta: paginationMeta,
-  data: StEventRsvpSchema.array(),
-});
+export const StListEventRsvpsResponseSchema = listResponse(StEventRsvpSchema);
 
 export type StEventRsvp = z.infer<typeof StEventRsvpSchema>;
 

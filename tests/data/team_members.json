@@ -1,0 +1,29 @@
+{
+  "data": [
+    {
+      "id": 17525,
+      "user_id": 15425168,
+      "scope_id": 1288,
+      "scope_type": "Organization",
+      "role_id": 2,
+      "logged_in_as_id": 1288,
+      "logged_in_as_type": "utique",
+      "last_app_activity_at": "2026-05-20",
+      "created_at": "2026-04-09T07:04:44.971+10:00",
+      "assignments": [
+        {
+          "id": 17515,
+          "scope_id": 1288,
+          "scope_type": "Organization",
+          "role_id": 2,
+          "role_name": "utpote deorsum"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "total_count": 1,
+    "limit": 25,
+    "offset": 0
+  }
+}

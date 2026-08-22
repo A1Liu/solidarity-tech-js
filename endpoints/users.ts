@@ -22,7 +22,10 @@ export interface StUserCreate {
   email_permission?: boolean | null;
 }
 
-const StPostUserResultSchema = z.object({ id: z.number(), message: z.string() });
+const StPostUserResultSchema = z.object({
+  id: z.number(),
+  message: z.string(),
+});
 
 export type StUserCreateResponse = z.infer<typeof StPostUserResultSchema>;
 

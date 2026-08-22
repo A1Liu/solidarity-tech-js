@@ -7,7 +7,8 @@
  * yet) and reports it the same way: covered when the schema models every key, or
  * "no schema yet" / a drift diff with the key/type shape to author or repair.
  *
- *   - Reads: one GET per list endpoint. Read-only, small page size.
+ *   - Reads: one GET per list endpoint, plus a `/{id}` GET wherever an item
+ *     schema is modeled. Read-only, small page size.
  *   - Mutations: a create → update → delete lifecycle per resource. THIS MUTATES
  *     DATA — point API_KEY at a throwaway account, never production. Every created
  *     row is deleted in a `finally`, so a failed check still cleans up.
@@ -24,17 +25,10 @@ import { createClient } from "../index";
 import { apiGet } from "../client";
 import type { ApiResult, ClientConfig } from "../client";
 import { UNCOVERED, shapeDiff, pickElement } from "./schema-coverage";
+import { listEndpoints } from "./resource-schemas";
+import type { ListEndpoint } from "./resource-schemas";
+import { lifecycleResources } from "./resources";
 import {
-  activitiesResponse,
-  callsResponse,
-  chaptersResponse,
-  customUserPropertiesResponse,
-  textsResponse,
-  usersResponse,
-} from "../schemas";
-import { StEventsResponse } from "../endpoints/events";
-import {
-  StEventSessionsResponse,
   StEventSessionResponse,
   StEventSessionMutationResponse,
 } from "../endpoints/event_sessions";
@@ -64,52 +58,33 @@ interface CoverageResult {
  * Reads — one GET per list endpoint
  * ------------------------------------------------------------------ */
 
-interface ListEndpoint {
-  resource: string;
-  expected: ZodType;
-}
-
-const listEndpoints: ListEndpoint[] = [
-  { resource: "events", expected: StEventsResponse },
-  { resource: "users", expected: usersResponse },
-  { resource: "activities", expected: activitiesResponse },
-  { resource: "calls", expected: callsResponse },
-  { resource: "texts", expected: textsResponse },
-  { resource: "chapters", expected: chaptersResponse },
-  {
-    resource: "custom_user_properties",
-    expected: customUserPropertiesResponse,
-  },
-  { resource: "event_sessions", expected: StEventSessionsResponse },
-  { resource: "event_attendances", expected: UNCOVERED },
-  { resource: "agent_assignments", expected: UNCOVERED },
-  { resource: "organizations", expected: UNCOVERED },
-  { resource: "team_members", expected: UNCOVERED },
-  { resource: "user_lists", expected: UNCOVERED },
-  { resource: "pages", expected: UNCOVERED },
-  { resource: "phonebanks", expected: UNCOVERED },
-  { resource: "textbanks", expected: UNCOVERED },
-  { resource: "scheduled_calls", expected: UNCOVERED },
-  { resource: "scheduled_tasks", expected: UNCOVERED },
-  { resource: "text_blasts", expected: UNCOVERED },
-  { resource: "email_blasts", expected: UNCOVERED },
-  { resource: "text_templates", expected: UNCOVERED },
-  { resource: "task_agents", expected: UNCOVERED },
-  { resource: "task_assignments", expected: UNCOVERED },
-  { resource: "chapter_phone_numbers", expected: UNCOVERED },
-];
-
 async function checkList({
   resource,
   expected,
-}: ListEndpoint): Promise<CoverageResult> {
+  item,
+}: ListEndpoint): Promise<CoverageResult[]> {
   const res = await apiGet(config, `/${resource}`, { query: listQuery });
-  if (res.ok) {
-    const rows = (res.data as { data?: unknown })?.data;
-    if (!Array.isArray(rows) || rows.length === 0)
-      return { label: resource, covered: false, reason: "no rows to sample" };
-  }
-  return evaluate(resource, res, expected);
+  if (!res.ok) return [evaluate(resource, res, expected)];
+
+  const rows = (res.data as { data?: unknown })?.data;
+  if (!Array.isArray(rows) || rows.length === 0)
+    return [{ label: resource, covered: false, reason: "no rows to sample" }];
+
+  const results = [evaluate(resource, res, expected)];
+
+  // The item GET is a second contract, checked against a row the list just
+  // returned so no row has to be created to reach it.
+  const id = (rows[0] as { id?: unknown })?.id;
+  if (item && typeof id === "number")
+    results.push(
+      evaluate(
+        `${resource} GET/{id}`,
+        await apiGet(config, `/${resource}/${id}`),
+        item,
+      ),
+    );
+
+  return results;
 }
 
 /* ------------------------------------------------------------------ *
@@ -253,6 +228,18 @@ async function buildCases(): Promise<MutationCase[]> {
   ];
 }
 
+/**
+ * Lifecycle candidates the document claims but the live API cannot actually
+ * drive, with what a run proved. A case here would create a row it cannot
+ * delete, so it is not written — and naming it keeps the gap from reading as
+ * work nobody has gotten to yet.
+ */
+const undrivable: Record<string, string> = {
+  agent_assignments:
+    "DELETE /{id} is documented but answers 404 for a row GET returns; " +
+    "a run orphaned one assignment before this was known",
+};
+
 /* ------------------------------------------------------------------ *
  * Report
  * ------------------------------------------------------------------ */
@@ -280,12 +267,26 @@ function report(title: string, results: CoverageResult[]): void {
 }
 
 async function runAudit(): Promise<void> {
-  const reads = await Promise.all(listEndpoints.map(checkList));
+  const reads = (await Promise.all(listEndpoints.map(checkList))).flat();
   const cases = await buildCases();
   const mutations = (await Promise.all(cases.map(runCase))).flat();
 
   report("List endpoints", reads);
   report("Mutations", mutations);
+
+  // The document says these support create and delete-by-id, so each is a
+  // lifecycle this runner could drive. Naming the gap keeps the hand-written
+  // case list from being the only record of what is missing.
+  const cased = new Set(cases.map((mutation) => mutation.resource));
+  const uncovered = lifecycleResources.filter(
+    (resource) => !cased.has(resource) && !(resource in undrivable),
+  );
+  if (uncovered.length)
+    console.log(
+      `\nNo mutation case yet (create + delete documented): ${uncovered.join(", ")}`,
+    );
+  for (const [resource, reason] of Object.entries(undrivable))
+    console.log(`\nNo mutation case possible — ${resource}: ${reason}.`);
 
   const all = [...reads, ...mutations];
   const notCovered = all.filter((result) => !result.covered);

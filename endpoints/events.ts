@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { apiGet } from "../client";
 import type { ApiResult, ClientConfig } from "../client";
-import { paginationMeta } from "../schemas";
+import { listResponse } from "../schemas";
 import type { ListParams } from "../schemas";
 
 /* ------------------------------------------------------------------ *
@@ -153,10 +153,7 @@ export const StEvent = z.object({
   created_at: z.string(),
 });
 
-export const StEventsResponse = z.object({
-  data: z.array(StEvent),
-  meta: paginationMeta,
-});
+export const StEventsResponse = listResponse(StEvent);
 
 export type StCoordinates = z.infer<typeof StCoordinates>;
 export type StAddressComponent = z.infer<typeof StAddressComponent>;

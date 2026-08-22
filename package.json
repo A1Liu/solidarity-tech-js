@@ -12,6 +12,8 @@
   "devDependencies": {
     "@faker-js/faker": "^10.5.0",
     "@types/bun": "latest",
+    "genson-js": "^0.0.8",
+    "json-schema-to-zod": "^2.8.1",
     "prettier": "^3.8.3",
     "vitest": "^4.1.7"
   },
@@ -20,10 +22,12 @@
   },
   "scripts": {
     "compile": "tsc -p tsconfig.build.json",
+    "capture": "bun run ./scripts/capture.ts",
+    "draft": "bun run ./scripts/draft.ts",
     "test:script": "bun run ./scripts/test.ts",
     "vitest": "vitest run",
     "format": "prettier --write .",
-    "update": "./script.sh"
+    "update": "bun run ./scripts/update.ts"
   },
   "files": [
     "dist"
