@@ -1,22 +1,29 @@
 /**
- * Derive a Zod draft for every list resource, from both sources that describe it.
+ * Derive a Zod draft for every list resource from the responses it actually
+ * returned.
  *
- * Neither source alone is enough. A committed fixture is live truth but a thin
- * sample: a column null in every row infers `z.null()`, an always-empty array
- * infers `z.array(z.any())`. Each draft therefore opens with what its sample
- * could not decide, because sample thinness is a property of the account rather
- * than of the page size — several resources hold one row no `_limit` will
- * widen, and those are exactly the fields the document has to settle. The document's entity schema declares the
- * nullability and closed sets no sample can show, but it is stale and incomplete
- * — its `Organization` omits `id`, its `Chapter` omits `calendar_feed_url`. So a
- * draft carries both, each named for what it describes, and a human reconciles
- * them.
+ * A committed fixture is the only source here. It is live truth but a thin one:
+ * a column null in every row infers `z.null()`, an always-empty array infers
+ * `z.array(z.any())`. So every draft opens with what its sample could not
+ * decide, and that block is the draft's most important output — sample thinness
+ * is a property of the account rather than of the page size, and several
+ * resources hold one row no `_limit` will widen.
+ *
+ * Nothing settles those fields automatically, and deliberately so. The vendored
+ * OpenAPI document used to fill that role and was wrong often enough to be worse
+ * than an admitted gap: it declares `last_app_activity_at` as an offset datetime
+ * where the API returns a plain date, and omits fields it does describe
+ * (`Organization` has no `id`, `Chapter` no `calendar_feed_url`). An undecided
+ * field is closed by evidence — a wider sample, a different account, a second
+ * capture later — or it is modeled defensively and the comment says which.
+ *
+ * A resource with an item GET gets a second inferred schema from its item
+ * fixture, because that response is a different shape rather than a subset.
  *
  * Drafting from committed data only means this never touches the network and
- * needs no API key: a fresh clone regenerates every draft offline, including for
- * the resources whose live list is empty and may never have a fixture. Capture
- * does not call it — a pure function of committed data needs no live run, and
- * wiring it in would re-couple two subsystems that were just separated.
+ * needs no API key: a fresh clone regenerates every draft offline. Capture does
+ * not call it — a pure function of committed data needs no live run, and wiring
+ * it in would re-couple two subsystems that were just separated.
  *
  * Drafts are committed and value-free — key names and inferred type names only —
  * so a diff shows the live shape changing, and `tsc --noEmit` verifies them like
@@ -25,36 +32,30 @@
  *
  *   bun run draft
  */
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { createSchema } from "genson-js";
 import { jsonSchemaToZod } from "json-schema-to-zod";
-import type { JsonSchema } from "json-schema-to-zod";
 import { format } from "prettier";
 import {
   draftDirectory,
   fixturePath,
+  itemFixturePath,
   listResources,
-  specComponent,
 } from "./resources";
 
 export interface DraftOutcome {
   resource: string;
-  /** Which of the two inputs the draft was built from. */
+  /** Which committed fixtures the draft was built from. */
   sources: string[];
   error?: string;
 }
 
-interface Fixture {
+interface Inferred {
   zod: string;
   /** Key names and counts only — never a field value. */
   undecided: string[];
-}
-
-/** Contains the `any` the `Object.entries` overload produces for a bare object. */
-function entriesOf(value: object): [string, unknown][] {
-  return Object.entries(value);
 }
 
 function rowsOf(body: unknown): Record<string, unknown>[] {
@@ -69,7 +70,7 @@ function rowsOf(body: unknown): Record<string, unknown>[] {
 /**
  * What this sample leaves open, as key names: the fields whose inferred type is
  * an artifact of how little the account holds rather than of the API's contract.
- * Each one has to be settled from the document's entity schema.
+ * Each one has to be settled by evidence or modeled defensively and commented.
  */
 function undecidedBy(rows: Record<string, unknown>[]): string[] {
   if (rows.length === 0) return [];
@@ -95,9 +96,7 @@ function undecidedBy(rows: Record<string, unknown>[]): string[] {
       `empty in every row, so the element type is unverified: ${alwaysEmpty.join(", ")}`,
     );
   if (rows.length === 1)
-    notes.push(
-      "one row only — this sample decides no nullability at all; take it from `specElement`",
-    );
+    notes.push("one row only — this sample decides no nullability at all");
   else {
     const invariant = keys.filter(
       (key) =>
@@ -113,8 +112,7 @@ function undecidedBy(rows: Record<string, unknown>[]): string[] {
   return notes;
 }
 
-async function fromFixture(resource: string): Promise<Fixture | undefined> {
-  const path = fixturePath(resource);
+async function infer(path: string): Promise<Inferred | undefined> {
   if (!existsSync(path)) return undefined;
   const body: unknown = JSON.parse(await readFile(path, "utf8"));
   return {
@@ -123,47 +121,49 @@ async function fromFixture(resource: string): Promise<Fixture | undefined> {
   };
 }
 
-function fromSpec(resource: string): string | undefined {
-  const component = specComponent(resource);
-  // `resolveJsonModule` widens the document's literals to `string`, so the
-  // narrowing cannot be inferred. The document is JSON Schema by construction.
-  return component === undefined
-    ? undefined
-    : jsonSchemaToZod(component as JsonSchema);
+function section(name: string, path: string, inferred: Inferred): string[] {
+  const notes = inferred.undecided.length
+    ? [
+        " *",
+        " * What this sample does NOT decide:",
+        ...inferred.undecided.map((note) => ` * - ${note}`),
+      ]
+    : [];
+  return [
+    [
+      "/**",
+      ` * The whole response, inferred from \`${path}\`.`,
+      ...notes,
+      " */",
+    ].join("\n"),
+    `export const ${name} = ${inferred.zod};`,
+  ];
 }
 
 async function draftOne(resource: string): Promise<DraftOutcome> {
+  const draftPath = join(draftDirectory, `${resource}.ts`);
   try {
-    const fixture = await fromFixture(resource);
-    const element = fromSpec(resource);
-    if (!fixture && !element) return { resource, sources: [] };
+    const list = await infer(fixturePath(resource));
+    const item = await infer(itemFixturePath(resource));
+    if (!list && !item) {
+      // A draft that outlives its fixture describes a shape nothing verified.
+      await rm(draftPath, { force: true });
+      return { resource, sources: [] };
+    }
 
     const parts = ['import { z } from "zod";'];
-    if (fixture)
-      parts.push(
-        [
-          "/**",
-          ` * The whole response, inferred from \`${fixturePath(resource)}\`.`,
-          " *",
-          " * What this sample does NOT decide:",
-          ...fixture.undecided.map((note) => ` * - ${note}`),
-          " */",
-        ].join("\n"),
-        `export const fixtureResponse = ${fixture.zod};`,
-      );
-    if (element)
-      parts.push(
-        `/** One element, from the document's entity schema — stale, but it declares nullability and closed sets a sample cannot. */`,
-        `export const specElement = ${element};`,
-      );
+    if (list)
+      parts.push(...section("fixtureResponse", fixturePath(resource), list));
+    if (item)
+      parts.push(...section("itemResponse", itemFixturePath(resource), item));
 
     await writeFile(
-      join(draftDirectory, `${resource}.ts`),
+      draftPath,
       await format(parts.join("\n\n"), { parser: "typescript" }),
     );
     return {
       resource,
-      sources: [...(fixture ? ["fixture"] : []), ...(element ? ["spec"] : [])],
+      sources: [...(list ? ["list"] : []), ...(item ? ["item"] : [])],
     };
   } catch (error) {
     return {
@@ -186,7 +186,7 @@ export function reportDrafts(outcomes: DraftOutcome[]): void {
     if (outcome.error)
       console.log(`  ✗ ${outcome.resource} — ${outcome.error}`);
     else if (outcome.sources.length === 0)
-      console.log(`  · ${outcome.resource} — no fixture and no entity schema`);
+      console.log(`  · ${outcome.resource} — no fixture captured yet`);
     else
       console.log(`  ✓ ${outcome.resource} — ${outcome.sources.join(" + ")}`);
   }

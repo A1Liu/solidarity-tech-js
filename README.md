@@ -3,10 +3,12 @@
 A typed JS/TS client for the [Solidarity Tech](https://solidarity.tech) API
 (`https://api.solidarity.tech/v1`).
 
-Much of this SDK was generated from Solidarity Tech's OpenAPI document, which is
-stale and incomplete in places. Endpoints are therefore split into **verified**
-and **provisional** (see [Endpoint status](#endpoint-status)). Use provisional
-endpoints at your own risk.
+Much of this SDK started life generated from Solidarity Tech's OpenAPI document,
+which is stale and wrong in both directions — it declares operations the API
+answers 404 for, and omits ones it serves. **Live responses are the source of
+truth here**; the document is a source of leads to go check. Endpoints are
+therefore split into **verified** and **provisional** (see
+[Endpoint status](#endpoint-status)). Use provisional endpoints at your own risk.
 
 ## Usage
 
@@ -61,15 +63,16 @@ bun install
 cp .env.example .env      # add API_KEY for the live scripts
 ```
 
-| Command                       | What it does                              | Network     |
-| ----------------------------- | ----------------------------------------- | ----------- |
-| `bun run vitest`              | Unit tests and fixture validation         | no          |
-| `bun run compile`             | Build `dist/`                             | no          |
-| `bun run format`              | Prettier                                  | no          |
-| `bun run draft`               | Regenerate Zod drafts from committed data | no          |
-| `bun run capture [resource…]` | Sample live list responses into fixtures  | read-only   |
-| `bun run scripts/audit.ts`    | Live schema-coverage check                | **mutates** |
-| `bun run update`              | Refresh the vendored OpenAPI document     | read-only   |
+| Command                       | What it does                                 | Network     |
+| ----------------------------- | -------------------------------------------- | ----------- |
+| `bun run vitest`              | Unit tests and fixture validation            | no          |
+| `bun run compile`             | Build `dist/`                                | no          |
+| `bun run format`              | Prettier                                     | no          |
+| `bun run draft`               | Regenerate Zod drafts from committed data    | no          |
+| `bun run probe [resource…]`   | Ask the API which resources exist            | read-only   |
+| `bun run capture [resource…]` | Sample live list responses into fixtures     | read-only   |
+| `bun run scripts/audit.ts`    | Live schema-coverage check                   | **mutates** |
+| `bun run update`              | Refresh the vendored OpenAPI document (lead) | read-only   |
 
 The audit creates and deletes rows. Point `API_KEY` at a throwaway account,
 never production.
@@ -79,18 +82,41 @@ never production.
 This is the core contribution loop: it turns one resource's `unknown` responses
 into checked types.
 
-The whole process is about **authority** — four sources describe a resource, and
-each one decides exactly one thing. Nearly every mistake is a source used
-outside its authority.
+The whole process is about **authority** — every source here is a real response,
+and each decides exactly one thing. Nearly every mistake is a source used outside
+its authority.
 
-| Source               | Decides                             | Never decides                         |
-| -------------------- | ----------------------------------- | ------------------------------------- |
-| Live response        | shape, key presence, string formats | which fields can be null              |
-| Committed fixture    | what the shape _was_ — regression   | anything a small account cannot show  |
-| OpenAPI document     | nullability, closed sets (enums)    | whether the operation exists or works |
-| The audit's live run | mutation and item envelopes         | —                                     |
+| Source                    | Decides                             | Never decides                        |
+| ------------------------- | ----------------------------------- | ------------------------------------ |
+| A probe (`probe`)         | whether the operation exists at all | anything about the shape             |
+| A live sample (`capture`) | shape, key presence, string formats | which fields can be null             |
+| Committed fixture         | what the shape _was_ — regression   | anything a small account cannot show |
+| The audit's live run      | mutation and item envelopes         | —                                    |
 
-### 1. Sample the resource
+The OpenAPI document is not on this list. It decides nothing, and no code reads
+it — it is where candidate names come from, and nothing more.
+
+**Nullability has no authority.** No source settles it: a sample can prove a
+field _is_ sometimes null, but never that it cannot be. Where the sample is
+silent, model defensively and say in a comment that you did.
+
+### 1. Confirm the resource is real
+
+```
+bun run probe team_members
+```
+
+This asks the live API for `GET /team_members` and, if a row comes back, for
+`GET /team_members/{id}`, then records both statuses in
+`tests/data/inventory.json`. That file is the SDK's inventory: `capture`, `draft`
+and the audit all walk it, so a resource that answers 404 never becomes work.
+
+Run it with no arguments to re-check everything already in the manifest. Failures
+stay in the file with their status — "asked, and it is not there" is worth
+keeping, or the next person re-derives the same wrong endpoint from the same
+document.
+
+### 2. Sample the resource
 
 ```
 bun run capture team_members
@@ -105,56 +131,66 @@ collection omits entirely.
 guarantee does not depend on a `.gitignore` entry being right. The scrubber
 replaces every string with a generated stand-in of the same shape, so an ISO
 date stays an ISO date and an email stays email-shaped, but no real value
-survives. A string is kept verbatim only when the document declares its key as a
-closed set and the value is one of that set's members.
+survives. A string is kept verbatim only when **one of this SDK's own schemas**
+declares its key as a closed set (`z.enum`, or a union of `z.literal`) and the
+value is one of that set's members.
+
+That ordering matters: a resource with no schema yet gets no exemptions, so its
+first capture scrubs everything. If you later add a `z.enum` to its schema, the
+committed fixture stops parsing in `tests/fixtures.ts` — its values were replaced
+with stand-ins — and the fix is to re-capture. The failure is what tells you to.
 
 Because formats survive scrubbing, **the fixture is authority on format**. This
 is how we learned that `team_members.last_app_activity_at` is a plain
 `YYYY-MM-DD` date, not the offset datetime the document declares.
 
-With no arguments, `capture` samples every resource that has no fixture yet;
-naming resources refreshes those instead — which overwrites them. Some fixtures
-back hand-written value assertions (`tests/data/events.json` backs
-`tests/events.ts`), so refresh those only when you mean to update the assertions
-too.
+**A missing fixture is the request to fetch it**, decided per file — so a
+resource whose list fixture is already committed still gets its item fixture
+captured. To replace a fixture that exists, delete it and re-run, or name the
+resource: `bun run capture users` overwrites both of its fixtures.
 
-Some resources return no rows on a small account and can never be captured. For
-those the document is the only material you will get, and the resulting schema
-stays genuinely unverified — say so in a comment.
+Some fixtures back hand-written value assertions (`tests/data/events.json` backs
+`tests/events.ts`), so overwrite those only when you mean to update the
+assertions too.
 
-### 2. Read what the sample leaves open
+Some resources return no rows on a small account and can never be captured. There
+is no substitute material — leave the resource provisional rather than typing it
+from a document, which is how a schema that rejects live data gets shipped.
+
+### 3. Read what the sample leaves open
 
 ```
 bun run draft
 ```
 
-Each `tests/data/drafts/<resource>.ts` holds two schemas, deliberately not
-merged:
+Each `tests/data/drafts/<resource>.ts` holds what the committed fixtures infer:
 
-- `fixtureResponse` — inferred from your sample. Live truth, but a thin one: a
-  column that is null in every row infers `z.null()`, and an always-empty array
-  infers `z.array(z.any())`.
-- `specElement` — from the document's entity schema. Stale and often missing
-  fields, but it declares the nullability and enums no sample can show.
+- `fixtureResponse` — from the list sample. Live truth, but a thin one: a column
+  that is null in every row infers `z.null()`, and an always-empty array infers
+  `z.array(z.any())`.
+- `itemResponse` — from the `/{id}` sample, when there is one. A second contract,
+  not a subset.
 
 Every draft opens with a **What this sample does NOT decide** block — row count,
 always-null fields, always-empty arrays, fields with a single distinct value.
-Those are the fields the document has to settle. Sample thinness is a property
-of the account rather than of the page size: several resources hold one row that
-no `_limit` will widen.
+Sample thinness is a property of the account rather than of the page size:
+several resources hold one row that no `_limit` will widen. Nothing settles those
+fields for you; close them with more evidence, or model them defensively and say
+so in a comment.
 
 Drafts are committed, value-free, and generated offline, so a live shape change
-shows up as a diff in code review.
+shows up as a diff in code review. A draft whose fixture is deleted is deleted
+too — a draft that outlives its sample describes a shape nothing verified.
 
-### 3. Write the endpoint module by hand
+### 4. Write the endpoint module by hand
 
 Create `endpoints/<resource>.ts`. **Do not paste a draft in unedited** — the
 reconciliation is the work, and it is why this step is not automated. An
 auto-merge would have taken the document's `.datetime()` for
 `last_app_activity_at` and shipped a schema that rejects live data.
 
-Build the element schema from the fixture, settle each undecided field from
-`specElement`, then compose the envelope with the helpers in `schemas.ts`:
+Build the element schema from the fixture, decide each undecided field
+deliberately, then compose the envelope with the helpers in `schemas.ts`:
 
 ```typescript
 export const StThingsResponse = listResponse(StThing); // GET /things
@@ -169,11 +205,15 @@ Conventions: schemas are `St`-prefixed consts with a same-named inferred type,
 request bodies are plain interfaces, and every function takes `ClientConfig`
 first and returns `ApiResult<T>`.
 
-Comment what you could not verify. Where nullability came from the document
-rather than the sample, say so — the next person needs to know which parts of
-the schema are evidence and which are inference.
+Comment what you could not verify. Where nullability was assumed rather than
+observed, say so — the next person needs to know which parts of the schema are
+evidence and which are inference.
 
-### 4. Register the schemas
+If the resource has a genuinely closed set of string values, declare it as
+`z.enum` here. That is also what tells the scrubber to keep those values in the
+fixture, so re-capture after adding one.
+
+### 5. Register the schemas
 
 Add the list schema to `modeled` in `scripts/resource-schemas.ts`, and the item
 schema to `modeledItems`. One line each arms both guards at once:
@@ -181,31 +221,32 @@ schema to `modeledItems`. One line each arms both guards at once:
 fixture, and `scripts/audit.ts` now diffs it against a live response instead of
 reporting "no schema yet".
 
-### 5. Move the functions out of the stub
+### 6. Move the functions out of the stub
 
 Delete the resource's section from `endpoints-unverified-stub.ts`, add the
 functions to your module with real response schemas, and register the module in
 `index.ts` (both the `Endpoints` spread and the `export type *` list).
 
-### 6. Settle the mutation responses
+### 7. Settle the mutation responses
 
-The document describes **no mutation response bodies at all**. The only way to
-learn them is to run one, which is what the audit's mutation cases do — a
-create → show → update → delete lifecycle, with the delete in a `finally`.
+Mutation response bodies are learned the only way they can be: by running one.
+That is what the audit's mutation cases do — a create → show → update → delete
+lifecycle, with the delete in a `finally`.
 
 Add a case to `buildCases` in `scripts/audit.ts`, leaving `expectedCreate` and
 `expectedUpdate` unset on the first run. The run reports the live shape as "no
 schema yet", and you author the schema from that report.
 
-**A case may only exist if it can delete what it creates.** `lifecycleResources`
-lists what the _document_ says supports create-and-delete, and the document
-lies: adding an `agent_assignments` case orphaned a row, because its documented
-`DELETE` answers 404. Treat a new case's first run as the probe — run it by
-itself, on a throwaway account, and read the cleanup line. When the delete
-fails, remove the case, record the resource in `undrivable` in
-`scripts/audit.ts` with the evidence, and remove the row by hand.
+**A case may only exist if it can delete what it creates.** Unlike reads, this
+cannot be established by asking first: probing a `POST` risks leaving a row
+behind, and a `DELETE` that works has destroyed the thing it was asking about.
+So the case's own first run is the experiment — run it by itself, on a throwaway
+account, and read the cleanup line. When the delete fails, remove the case,
+record the resource in `undrivable` in `scripts/audit.ts` with the evidence, and
+remove the row by hand. `agent_assignments` is there because a run orphaned a
+row: its `DELETE /{id}` is documented, and answers 404.
 
-### 7. Verify
+### 8. Verify
 
 ```
 bunx tsc --noEmit
@@ -226,7 +267,10 @@ The audit should list your resource under covered list endpoints, plus
   `listResponse` / `itemResponse` / `mutationResponse` envelope helpers, and
   public types.
 - `index.ts` — public exports and `createClient`.
-- `scripts/resources.ts` — everything derived from the OpenAPI document: the
-  resource inventory, entity schemas, declared enums, lifecycle candidates.
-  Nothing here is hand-maintained.
-- `tests/data/` — scrubbed fixtures and generated drafts.
+- `scripts/resources.ts` — the resource inventory, read from
+  `tests/data/inventory.json`. Nothing here is hand-maintained, and nothing here
+  reads the OpenAPI document.
+- `scripts/declared-enums.ts` — the closed sets this SDK's own schemas declare,
+  which is what the scrubber lets survive a capture.
+- `tests/data/` — `inventory.json` (what the live API answered when last asked),
+  scrubbed fixtures, and generated drafts.

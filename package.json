@@ -22,6 +22,7 @@
   },
   "scripts": {
     "compile": "tsc -p tsconfig.build.json",
+    "probe": "bun run ./scripts/probe.ts",
     "capture": "bun run ./scripts/capture.ts",
     "draft": "bun run ./scripts/draft.ts",
     "test:script": "bun run ./scripts/test.ts",

@@ -51,28 +51,3 @@ export const fixtureResponse = z.object({
     next_cursor: z.null(),
   }),
 });
-
-/** One element, from the document's entity schema — stale, but it declares nullability and closed sets a sample cannot. */
-
-export const specElement = z.object({
-  id: z.number().int().optional(),
-  user_id: z.number().int().optional(),
-  name: z.string().optional(),
-  actionable_id: z.number().int().optional(),
-  actionable_type: z.string().optional(),
-  action: z
-    .object({
-      id: z.number().int().optional(),
-      user_id: z.number().int().optional(),
-      agent_user_id: z.number().int().nullable().optional(),
-      field_type: z.string().nullable().optional(),
-      old_value: z.string().nullable().optional(),
-      new_value: z.string().nullable().optional(),
-      data_import_id: z.number().int().nullable().optional(),
-      created_at: z.string().datetime({ offset: true }).optional(),
-      updated_at: z.string().datetime({ offset: true }).optional(),
-    })
-    .optional(),
-  created_at: z.string().datetime({ offset: true }).optional(),
-  updated_at: z.string().datetime({ offset: true }).optional(),
-});

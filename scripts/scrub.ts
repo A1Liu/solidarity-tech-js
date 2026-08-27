@@ -1,14 +1,13 @@
 /**
- * Fail-closed scrubbing for captured API responses — the mechanism behind
- * ADR 0001.
+ * Fail-closed scrubbing for captured API responses.
  *
- * Every string is replaced with a stand-in unless the document declares its key
- * as a closed set and the value is one of that set's members, so a field nobody
- * anticipated is scrubbed by default rather than by memory. The stand-in's shape
- * is inferred from the value rather than the key: an
- * email-shaped string becomes an email-shaped stand-in and an ISO timestamp
- * keeps its precision and zone, so identity is destroyed while the format a
- * schema checks survives.
+ * No personal data lands in a committed fixture, ever. Every string is replaced
+ * with a stand-in unless a schema declares its key as a closed set and the value
+ * is one of that set's members, so a field nobody anticipated is scrubbed by
+ * default rather than by memory. The stand-in's shape is inferred from the
+ * value rather than the key: an email-shaped string becomes an email-shaped
+ * stand-in and an ISO timestamp keeps its precision and zone, so identity is
+ * destroyed while the format a schema checks survives.
  *
  * A string holding an encoded JSON document is decoded, scrubbed, and
  * re-encoded. Flattening one to a stand-in would still parse green — the event
@@ -19,19 +18,18 @@
  * no stand-in can be linked back to the record it came from.
  */
 import { faker } from "@faker-js/faker";
-import { declaredEnums } from "./resources";
+import { declaredEnums } from "./declared-enums";
 
 const scrubSeed = 20260812;
 
 /**
- * Whether a string is one of a closed set the document declares for its key —
- * the only reason a string survives verbatim.
+ * Whether a string is one of a closed set one of this SDK's schemas declares for
+ * its key — the only reason a string survives verbatim.
  *
- * Both conditions are required, which makes this strictly narrower than the
- * hand-kept key list it replaces: a declared-enum key still scrubs when it holds
- * anything but a declared member, and no exemption can be added by memory. The
- * document declares five such properties; the hand-kept list had reached two,
- * each added only after a schema failure had already been shipped.
+ * Both conditions are required: a declared-enum key still scrubs when it holds
+ * anything but a declared member, and no exemption can be added by memory.
+ * Widening the exemption means writing the literals into a schema, where they
+ * are reviewed as part of the resource's contract.
  */
 export function isDeclaredEnumValue(key: string, value: string): boolean {
   return declaredEnums.get(key)?.has(value) ?? false;
@@ -129,8 +127,8 @@ export function scrubResponse(body: unknown): unknown {
 
 /**
  * Paths where a non-empty string survived scrubbing under an unexempted key —
- * the mechanical check that ADR 0001's absolute rule held for this body. Every
- * string returned is a path built from key names, never a field value.
+ * the mechanical check that the absolute rule held for this body. Every string
+ * returned is a path built from key names, never a field value.
  */
 export function findRetainedStrings(
   raw: unknown,

@@ -32,19 +32,3 @@ export const fixtureResponse = z.object({
     offset: z.number().int(),
   }),
 });
-
-/** One element, from the document's entity schema — stale, but it declares nullability and closed sets a sample cannot. */
-
-export const specElement = z.object({
-  id: z.number().int().optional(),
-  name: z.string().optional(),
-  key: z.string().optional(),
-  field_type: z.string().optional(),
-  options: z
-    .array(
-      z.object({ label: z.string().optional(), value: z.string().optional() }),
-    )
-    .optional(),
-  scope_id: z.number().int().optional(),
-  scope_type: z.enum(["Organization", "Chapter"]).nullable().optional(),
-});

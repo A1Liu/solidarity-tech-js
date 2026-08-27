@@ -27,7 +27,7 @@ import type { ApiResult, ClientConfig } from "../client";
 import { UNCOVERED, shapeDiff, pickElement } from "./schema-coverage";
 import { listEndpoints } from "./resource-schemas";
 import type { ListEndpoint } from "./resource-schemas";
-import { lifecycleResources } from "./resources";
+import { probedResources } from "./resources";
 import {
   StEventSessionResponse,
   StEventSessionMutationResponse,
@@ -229,14 +229,13 @@ async function buildCases(): Promise<MutationCase[]> {
 }
 
 /**
- * Lifecycle candidates the document claims but the live API cannot actually
- * drive, with what a run proved. A case here would create a row it cannot
- * delete, so it is not written — and naming it keeps the gap from reading as
- * work nobody has gotten to yet.
+ * Resources a live run proved this runner cannot drive, with the evidence. A
+ * case here would create a row it cannot delete, so it is not written — and
+ * naming it keeps the gap from reading as work nobody has gotten to yet.
  */
 const undrivable: Record<string, string> = {
   agent_assignments:
-    "DELETE /{id} is documented but answers 404 for a row GET returns; " +
+    "DELETE /{id} answers 404 for a row GET returns; " +
     "a run orphaned one assignment before this was known",
 };
 
@@ -274,16 +273,21 @@ async function runAudit(): Promise<void> {
   report("List endpoints", reads);
   report("Mutations", mutations);
 
-  // The document says these support create and delete-by-id, so each is a
-  // lifecycle this runner could drive. Naming the gap keeps the hand-written
-  // case list from being the only record of what is missing.
+  // Whether a resource supports create-and-delete cannot be established by
+  // asking: probing a POST risks leaving a row behind, and a DELETE that
+  // succeeds has destroyed the thing it was asking about. So the honest baseline
+  // is every resource anyone has asked about, minus the ones a run has already
+  // settled. Deliberately not the resources that answer a collection GET: a GET
+  // 404 is evidence about that one request, and `user_notes` answers 404 while
+  // being perfectly real — it only takes POST. Naming the gap keeps the
+  // hand-written case list from being the only record of what is missing.
   const cased = new Set(cases.map((mutation) => mutation.resource));
-  const uncovered = lifecycleResources.filter(
+  const uncovered = probedResources.filter(
     (resource) => !cased.has(resource) && !(resource in undrivable),
   );
   if (uncovered.length)
     console.log(
-      `\nNo mutation case yet (create + delete documented): ${uncovered.join(", ")}`,
+      `\nNo mutation case yet (${uncovered.length}): ${uncovered.join(", ")}`,
     );
   for (const [resource, reason] of Object.entries(undrivable))
     console.log(`\nNo mutation case possible — ${resource}: ${reason}.`);

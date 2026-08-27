@@ -1,11 +1,13 @@
 /**
  * Refresh the vendored OpenAPI document from ReadMe.
  *
- * `scripts/resources.ts` derives the resource inventory, entity schemas, and
- * declared enums from `.api/apis/solidarity-tech/openapi.json`, which makes that
- * document load-bearing — and a snapshot nobody can refresh is hand-maintenance
- * moved rather than deleted. This is the refresh. Any diff it produces is a
- * genuine upstream change.
+ * The document is a lead, not a source of truth, and no code reads it — it is
+ * stale and wrong in both directions, declaring operations the API answers 404
+ * for and omitting ones it serves. What it is good for is names: a diff here
+ * surfaces resources nobody has asked the API about yet, and each becomes an
+ * argument to `bun run probe`, which settles whether it is real. It also remains
+ * the origin of the provisional paths in `endpoints-unverified-stub.ts`, which
+ * are typed `unknown` precisely because that is all the document's word is worth.
  *
  * The `api` installer cannot fetch a document on its own: it generates a whole
  * SDK (~9,700 files, including a nested `node_modules`) and adds itself to the

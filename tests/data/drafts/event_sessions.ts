@@ -66,56 +66,48 @@ export const fixtureResponse = z.object({
   }),
 });
 
-/** One element, from the document's entity schema — stale, but it declares nullability and closed sets a sample cannot. */
+/**
+ * The whole response, inferred from `tests/data/event_sessions.item.json`.
+ */
 
-export const specElement = z.object({
-  event_id: z.number().int().describe("Identifier for the Mobilize event"),
-  start_time: z
-    .number()
-    .int()
-    .nullable()
-    .describe("UTC timestamp in seconds since the Unix epoch"),
-  end_time: z
-    .number()
-    .int()
-    .nullable()
-    .describe("UTC timestamp in seconds since the Unix epoch"),
-  title: z
-    .string()
-    .nullable()
-    .describe("Title of the event session")
-    .optional(),
-  location_name: z
-    .string()
-    .nullable()
-    .describe("Name of the location")
-    .optional(),
-  location_data: z
-    .object({
-      components: z.string().nullable().optional(),
-      coordinates: z.string().nullable().optional(),
-      address_city: z.string().nullable().optional(),
-      full_address: z.string().nullable().optional(),
-      address_state: z.string().nullable().optional(),
-      address_line_1: z.string().nullable().optional(),
-      address_country: z.string().nullable().optional(),
-      address_postal_code: z.string().nullable().optional(),
-    })
-    .nullable()
-    .optional(),
-  location_address: z
-    .string()
-    .nullable()
-    .describe("Physical address of the event location")
-    .optional(),
-  show_rsvp_bar: z
-    .boolean()
-    .nullable()
-    .describe("Flag to show RSVP bar")
-    .optional(),
-  show_title_in_form: z
-    .boolean()
-    .nullable()
-    .describe("Flag to show title in the form")
-    .optional(),
+export const itemResponse = z.object({
+  data: z.object({
+    id: z.number().int(),
+    mobilize_event_id: z.number().int(),
+    start_time: z.string(),
+    end_time: z.string(),
+    title: z.string(),
+    created_at: z.string(),
+    updated_at: z.string(),
+    location_name: z.null(),
+    location_data: z.null(),
+    lonlat: z.null(),
+    location_address: z.null(),
+    show_rsvp_bar: z.boolean(),
+    show_title_in_form: z.boolean(),
+    max_capacity: z.number().int(),
+    note: z.null(),
+    tags: z.array(z.any()),
+    zoom_account_id: z.null(),
+    zoom_meeting_id: z.null(),
+    zoom_meeting_data: z.null(),
+    zoom_join_before_host: z.boolean(),
+    zoom_attendance_synced_at: z.null(),
+    source_calendar_item_id: z.null(),
+    event_type: z.string(),
+    paired_meci_id: z.null(),
+    recurring_schedule_id: z.null(),
+    mobilize_event_task_id: z.null(),
+    host_user_ids: z.array(z.any()),
+    rsvp_count: z.number().int(),
+    attendance_count: z.number().int(),
+    host_tools_url: z.string(),
+    primary_session_id: z.number().int(),
+    city_state_label: z.null(),
+  }),
+  meta: z.object({
+    total_count: z.number().int(),
+    limit: z.number().int(),
+    offset: z.number().int(),
+  }),
 });

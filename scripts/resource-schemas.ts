@@ -70,6 +70,18 @@ const modeledItems: Record<string, ZodType> = {
   organizations: StOrganizationResponse,
 };
 
+/**
+ * Every schema registered above, list and item. `./declared-enums` walks these
+ * rather than `listEndpoints`, because the closed sets a schema declares are a
+ * fact about the schema — not about which resources the live inventory happens
+ * to serve today. Reading them through the inventory would let a resource
+ * dropping out quietly change what the scrubber preserves.
+ */
+export const registeredSchemas: ZodType[] = [
+  ...Object.values(modeled),
+  ...Object.values(modeledItems),
+];
+
 export const listEndpoints: ListEndpoint[] = listResources.map((resource) => ({
   resource,
   expected: modeled[resource] ?? UNCOVERED,

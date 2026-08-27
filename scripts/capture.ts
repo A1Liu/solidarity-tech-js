@@ -1,5 +1,5 @@
 /**
- * Capture committed response fixtures from the live API (ADR 0001).
+ * Capture committed response fixtures from the live API.
  *
  * Samples a list resource raw, scrubs personal data out in memory, proves no
  * live string survived, and writes `tests/data/<resource>.json`. The unscrubbed
@@ -12,14 +12,17 @@
  * reported where it belongs — `tests/fixtures.ts` fails the build on it,
  * `scripts/audit.ts` diffs it.
  *
- * A resource with an item GET is sampled twice — the collection, then
- * `/{id}` for the first row it returned — because the item response is a
- * different shape, not a subset of the list's.
+ * Which resources exist, and which of them have an item GET, comes from
+ * `tests/data/inventory.json` — the statuses the live API answered when
+ * `bun run probe` last asked. A resource with an item GET is sampled twice — the
+ * collection, then `/{id}` for the first row it returned — because the item
+ * response is a different shape, not a subset of the list's.
  *
- * With no arguments it captures every list resource that has no fixture yet.
- * Naming resources captures those and overwrites them, which is how a stale
- * fixture is refreshed — the default never overwrites, because fixtures carry
- * hand-written value assertions (`tests/events.ts`).
+ * A missing fixture is the request to fetch it, decided per file — so a
+ * resource whose list fixture is committed still gets its item fixture
+ * captured. Naming resources overwrites theirs, which is how a stale fixture is
+ * refreshed; the default never overwrites, because fixtures carry hand-written
+ * value assertions (`tests/events.ts`).
  *
  *   bun run capture
  *   bun run capture users chapters
@@ -49,9 +52,13 @@ if (!apiKey) {
 
 const config: ClientConfig = { apiKey };
 // More rows than a schema strictly needs: nullability is only as good as what
-// varies across them, and every extra row is scrubbed like the rest. The
-// document declares a default of 20 and no maximum.
+// varies across them, and every extra row is scrubbed like the rest.
 const captureQuery = { _limit: 25 };
+
+// Naming resources is the overwrite. Otherwise a fixture already on disk is
+// kept, because a missing file is the only way to ask for a fresh sample.
+const named = process.argv.slice(2);
+const overwrite = named.length > 0;
 
 const listEnvelope = z.object({
   data: z.array(z.object({ id: z.number().int() }).loose()),
@@ -62,11 +69,15 @@ type CaptureOutcome =
   | { status: "skipped"; resource: string; reason: string }
   | { status: "failed"; resource: string; reason: string };
 
-/** Scrub a body and write it, or report why no fixture was written. */
+/**
+ * Scrub a body and write it, or report why no fixture was written. A fixture
+ * that already exists is left alone unless this run is an overwrite.
+ */
 async function writeFixture(
   path: string,
   body: unknown,
 ): Promise<string | undefined> {
+  if (!overwrite && existsSync(path)) return undefined;
   const scrubbed = scrubResponse(body);
   const retained = findRetainedStrings(body, scrubbed);
   if (retained.length)
@@ -126,7 +137,10 @@ function select(requested: string[]): Selection {
   if (requested.length === 0)
     return {
       resources: listResources.filter(
-        (resource) => !existsSync(fixturePath(resource)),
+        (resource) =>
+          !existsSync(fixturePath(resource)) ||
+          (itemResources.includes(resource) &&
+            !existsSync(itemFixturePath(resource))),
       ),
       unknownResources: [],
     };
@@ -143,7 +157,7 @@ function report(outcomes: CaptureOutcome[]): void {
     switch (outcome.status) {
       case "written":
         console.log(
-          `  ✓ ${outcome.resource} — ${outcome.rows} row(s) → ${fixturePath(outcome.resource)}` +
+          `  ✓ ${outcome.resource} — ${outcome.rows} row(s) sampled` +
             (outcome.item ? `  ${outcome.item}` : ""),
         );
         break;
@@ -158,15 +172,17 @@ function report(outcomes: CaptureOutcome[]): void {
 }
 
 async function runCapture(): Promise<void> {
-  const { resources, unknownResources } = select(process.argv.slice(2));
+  const { resources, unknownResources } = select(named);
   for (const name of unknownResources)
-    console.error(`Unknown resource: ${name}`);
+    console.error(
+      `Not a resource the live API serves: ${name} — run \`bun run probe ${name}\` first.`,
+    );
 
   if (resources.length === 0) {
     console.log(
       unknownResources.length
         ? "Nothing to capture."
-        : "Every list resource already has a fixture — name resources to refresh them.",
+        : "Every fixture is already committed — name resources to overwrite them.",
     );
     process.exit(unknownResources.length === 0 ? 0 : 1);
   }
