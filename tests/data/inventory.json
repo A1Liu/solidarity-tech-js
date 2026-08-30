@@ -1,0 +1,110 @@
+{
+  "activities": {
+    "list": 200,
+    "item": 404
+  },
+  "agent_assignments": {
+    "list": 200,
+    "item": 200
+  },
+  "calls": {
+    "list": 200,
+    "item": null
+  },
+  "chapter_phone_numbers": {
+    "list": 200,
+    "item": null
+  },
+  "chapters": {
+    "list": 200,
+    "item": 404
+  },
+  "custom_user_properties": {
+    "list": 200,
+    "item": 404
+  },
+  "email_blasts": {
+    "list": 200,
+    "item": null
+  },
+  "event_attendances": {
+    "list": 200,
+    "item": null
+  },
+  "event_rsvps": {
+    "list": 200,
+    "item": 200
+  },
+  "event_sessions": {
+    "list": 200,
+    "item": 200
+  },
+  "events": {
+    "list": 200,
+    "item": 200
+  },
+  "organizations": {
+    "list": 200,
+    "item": 200
+  },
+  "pages": {
+    "list": 200,
+    "item": null
+  },
+  "phonebanks": {
+    "list": 200,
+    "item": null
+  },
+  "scheduled_calls": {
+    "list": 200,
+    "item": null
+  },
+  "scheduled_tasks": {
+    "list": 200,
+    "item": null
+  },
+  "task_agents": {
+    "list": 200,
+    "item": null
+  },
+  "task_assignments": {
+    "list": 200,
+    "item": null
+  },
+  "team_members": {
+    "list": 200,
+    "item": 404
+  },
+  "text_blasts": {
+    "list": 200,
+    "item": null
+  },
+  "text_templates": {
+    "list": 200,
+    "item": null
+  },
+  "textbanks": {
+    "list": 200,
+    "item": null
+  },
+  "texts": {
+    "list": 200,
+    "item": null
+  },
+  "user_actions": {
+    "list": 200,
+    "item": null
+  },
+  "user_lists": {
+    "list": 200,
+    "item": null
+  },
+  "user_notes": {
+    "list": 404,
+    "item": null
+  },
+  "users": {
+    "list": 200,
+    "item": 200
+  }
+}

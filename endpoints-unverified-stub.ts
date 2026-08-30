@@ -40,68 +40,6 @@ export function listActivities(
 }
 
 /* ------------------------------------------------------------------ *
- * Agent Assignments
- * ------------------------------------------------------------------ */
-
-export interface ListAgentAssignmentsParams extends ListParams {
-  user_id?: number;
-  agent_user_id?: number;
-}
-
-export interface AgentAssignmentCreate {
-  user_id: number;
-  agent_user_id: number | null;
-  is_active?: boolean | null;
-}
-
-export interface AgentAssignmentUpdate {
-  user_id?: number;
-  agent_user_id?: number | null;
-  is_active?: boolean | null;
-}
-
-/** GET /agent_assignments — Lists agent assignments. */
-export function listAgentAssignments(
-  config: ClientConfig,
-  params: ListAgentAssignmentsParams = {},
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, "/agent_assignments", { query: { ...params } });
-}
-
-/** POST /agent_assignments — Creates an agent assignment. */
-export function createAgentAssignment(
-  config: ClientConfig,
-  body: AgentAssignmentCreate,
-): Promise<ApiResult<unknown>> {
-  return apiPost(config, "/agent_assignments", { body });
-}
-
-/** GET /agent_assignments/{id} — Shows a single agent assignment. */
-export function getAgentAssignment(
-  config: ClientConfig,
-  id: number,
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, `/agent_assignments/${id}`);
-}
-
-/** PUT /agent_assignments/{id} — Updates an agent assignment. */
-export function updateAgentAssignment(
-  config: ClientConfig,
-  id: number,
-  body: AgentAssignmentUpdate,
-): Promise<ApiResult<unknown>> {
-  return apiPut(config, `/agent_assignments/${id}`, { body });
-}
-
-/** DELETE /agent_assignments/{id} — Deletes an agent assignment. */
-export function deleteAgentAssignment(
-  config: ClientConfig,
-  id: number,
-): Promise<ApiResult<unknown>> {
-  return apiDelete(config, `/agent_assignments/${id}`);
-}
-
-/* ------------------------------------------------------------------ *
  * Calls
  * ------------------------------------------------------------------ */
 
@@ -235,26 +173,6 @@ export function deleteEventRsvp(
   id: number,
 ): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/event_rsvps/${id}`);
-}
-
-/* ------------------------------------------------------------------ *
- * Organizations
- * ------------------------------------------------------------------ */
-
-/** GET /organizations — Lists organizations. */
-export function listOrganizations(
-  config: ClientConfig,
-  params: ListParams = {},
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, "/organizations", { query: { ...params } });
-}
-
-/** GET /organizations/{id} — Shows a single organization. */
-export function getOrganization(
-  config: ClientConfig,
-  id: number,
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, `/organizations/${id}`);
 }
 
 /* ------------------------------------------------------------------ *
@@ -497,18 +415,6 @@ export function deleteTaskAssignment(
   id: number,
 ): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/task_assignments/${id}`);
-}
-
-/* ------------------------------------------------------------------ *
- * Team Members
- * ------------------------------------------------------------------ */
-
-/** GET /team_members — Lists team members. */
-export function listTeamMembers(
-  config: ClientConfig,
-  params: ListParams = {},
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, "/team_members", { query: { ...params } });
 }
 
 /* ------------------------------------------------------------------ *

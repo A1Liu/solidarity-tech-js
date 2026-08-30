@@ -1,0 +1,58 @@
+{
+  "data": [
+    {
+      "id": 15425168,
+      "hash_id": "utique",
+      "phone_number": "76848972235",
+      "email": "Inez.Jones@hotmail.com",
+      "first_name": "neque",
+      "last_name": "usus",
+      "alternate_name": null,
+      "date_of_birth": null,
+      "age": null,
+      "preferred_language": "tripudio",
+      "second_language": null,
+      "secondary_languages": [],
+      "chapter_id": 2864,
+      "chapter_ids": [
+        2864
+      ],
+      "branch_id": null,
+      "created_at": "2026-07-25T08:15:00.062-07:00",
+      "updated_at": "2026-02-12T00:07:49.493-07:00",
+      "custom_user_properties": {
+        "ballot-revisit-url": null,
+        "ballot-image-url": null,
+        "2026_slate_candidate_engagements": null,
+        "slate_event_count": null,
+        "zohran_rsvp_count": null,
+        "actionnetwork_action_count": null,
+        "actionnetwork_action_types": null
+      },
+      "tags": [],
+      "referral_code": "tui",
+      "timezone": null,
+      "address": {
+        "address1": null,
+        "address2": null,
+        "city": null,
+        "state": null,
+        "zip_code": null,
+        "country": null,
+        "latitude": null,
+        "longitude": null
+      },
+      "assessment": null,
+      "sms_permission": true,
+      "call_permission": true,
+      "email_permission": true,
+      "other_emails": [],
+      "other_phone_numbers": []
+    }
+  ],
+  "meta": {
+    "total_count": 1,
+    "limit": 5,
+    "offset": 0
+  }
+}

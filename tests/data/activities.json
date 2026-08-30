@@ -1,0 +1,101 @@
+{
+  "data": [
+    {
+      "id": 112171629,
+      "user_id": 15425168,
+      "name": "utique",
+      "actionable_id": 986298,
+      "actionable_type": "talus",
+      "action": null,
+      "created_at": "2026-03-30T19:59:26.862-04:00"
+    },
+    {
+      "id": 112171628,
+      "user_id": 15425168,
+      "name": "utpote",
+      "actionable_id": 450982,
+      "actionable_type": "deorsum",
+      "action": null,
+      "created_at": "2026-06-17T10:00:06.266-04:00"
+    },
+    {
+      "id": 112171011,
+      "user_id": 15425168,
+      "name": "voro",
+      "actionable_id": 986280,
+      "actionable_type": "synagoga",
+      "action": null,
+      "created_at": "2025-11-03T23:19:33.653-04:00"
+    },
+    {
+      "id": 111602872,
+      "user_id": 15425168,
+      "name": "cariosus",
+      "actionable_id": 40716943,
+      "actionable_type": "creptio",
+      "action": {
+        "id": 40716943,
+        "to": "Bernice.Morar27@hotmail.com",
+        "user_id": 15425168,
+        "subject": "delibero neque usus tripudio vir desipio tui delicate",
+        "sent_at": "2025-08-19T01:26:02.847-04:00",
+        "opened_at": "2026-03-09T04:51:14.432-04:00",
+        "clicked_at": null,
+        "did_bounce": null,
+        "email_message_id": null,
+        "user_marked_as_spam": null,
+        "event_rsvp_id": null,
+        "action_page_id": null,
+        "user_action_id": null
+      },
+      "created_at": "2025-09-05T10:44:18.421-04:00"
+    },
+    {
+      "id": 111598847,
+      "user_id": 15425168,
+      "name": "theatrum",
+      "actionable_id": 40716899,
+      "actionable_type": "patrocinor",
+      "action": {
+        "id": 40716899,
+        "to": "Patience48@yahoo.com",
+        "user_id": 15425168,
+        "subject": "spes texo conicio capto ante animi decipio",
+        "sent_at": "2025-10-16T17:08:17.618-04:00",
+        "opened_at": "2026-03-18T05:46:38.264-04:00",
+        "clicked_at": null,
+        "did_bounce": null,
+        "email_message_id": null,
+        "user_marked_as_spam": null,
+        "event_rsvp_id": null,
+        "action_page_id": null,
+        "user_action_id": null
+      },
+      "created_at": "2026-06-23T00:33:31.439-04:00"
+    },
+    {
+      "id": 111598704,
+      "user_id": 15425168,
+      "name": "dolorem",
+      "actionable_id": 17515,
+      "actionable_type": "advoco",
+      "action": {
+        "id": 17515,
+        "user_role_scope_id": 17525,
+        "scope_id": 1288,
+        "scope_type": "Organization",
+        "role_id": 2,
+        "created_at": "2026-07-26T15:00:27.110-04:00",
+        "updated_at": "2025-09-09T10:21:32.507-04:00"
+      },
+      "created_at": "2026-06-16T08:40:01.219-04:00"
+    }
+  ],
+  "meta": {
+    "total_count": null,
+    "limit": 25,
+    "offset": 0,
+    "cursor": null,
+    "next_cursor": null
+  }
+}

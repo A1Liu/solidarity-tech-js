@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { apiGet, apiPost, apiPut, apiDelete } from "../client";
 import type { ApiResult, ClientConfig } from "../client";
-import { paginationMeta } from "../schemas";
+import { itemResponse, listResponse, mutationResponse } from "../schemas";
 import type { EventLocationData, ListParams } from "../schemas";
 import { StEventSession } from "./events";
 
@@ -15,33 +15,17 @@ import { StEventSession } from "./events";
  * standalone list is expected to return the same element shape, which the live
  * audit confirms.
  */
-export const StEventSessionsResponse = z.object({
-  data: z.array(StEventSession),
-  meta: paginationMeta,
-});
+export const StEventSessionsResponse = listResponse(StEventSession);
 
 export type StEventSessionsResponse = z.infer<typeof StEventSessionsResponse>;
 
-/**
- * GET /event_sessions/{id} envelope. The show endpoint wraps a single
- * `StEventSession` in the same `{ data, meta }` shape as the list; the live
- * audit confirms the element and a `{total_count, limit, offset}` meta.
- */
-export const StEventSessionResponse = z.object({
-  data: StEventSession,
-  meta: paginationMeta,
-});
+/** GET /event_sessions/{id}. Confirmed by the live audit. */
+export const StEventSessionResponse = itemResponse(StEventSession);
 
 export type StEventSessionResponse = z.infer<typeof StEventSessionResponse>;
 
-/**
- * POST/PUT /event_sessions envelope. Create and update wrap the session in
- * `{ data }` with no `meta` (the list/show `meta` is pagination, absent here),
- * per the live audit.
- */
-export const StEventSessionMutationResponse = z.object({
-  data: StEventSession,
-});
+/** POST/PUT /event_sessions. Confirmed by the live audit. */
+export const StEventSessionMutationResponse = mutationResponse(StEventSession);
 
 export type StEventSessionMutationResponse = z.infer<
   typeof StEventSessionMutationResponse

@@ -1,0 +1,37 @@
+{
+  "data": [
+    {
+      "id": 714821,
+      "agent_user_id": 15425168,
+      "user_id": 15425168,
+      "created_at": "2026-07-07T22:01:43.113-06:00",
+      "is_active": false
+    },
+    {
+      "id": 698064,
+      "agent_user_id": 15425168,
+      "user_id": 15425168,
+      "created_at": "2026-05-20T17:53:23.446-06:00",
+      "is_active": false
+    },
+    {
+      "id": 698063,
+      "agent_user_id": 15425168,
+      "user_id": 15425168,
+      "created_at": "2026-04-09T07:04:44.963-06:00",
+      "is_active": false
+    },
+    {
+      "id": 698060,
+      "agent_user_id": 15425168,
+      "user_id": 15425168,
+      "created_at": "2026-07-08T14:22:43.767-06:00",
+      "is_active": false
+    }
+  ],
+  "meta": {
+    "total_count": 4,
+    "limit": 25,
+    "offset": 0
+  }
+}

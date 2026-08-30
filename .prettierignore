@@ -1,4 +1,5 @@
 bun.lock
+tests/data
 .claude
 .api
 node_modules

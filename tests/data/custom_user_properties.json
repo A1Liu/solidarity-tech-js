@@ -1,0 +1,129 @@
+{
+  "data": [
+    {
+      "id": 6406,
+      "name": "utique talus quo",
+      "key": "utpote",
+      "field_type": "deorsum",
+      "options": [],
+      "required": false,
+      "label": "tutis voro synagoga",
+      "description": "",
+      "scope_id": 1108,
+      "scope_type": "Organization",
+      "created_at": "2025-11-03T19:55:04.727-04:00"
+    },
+    {
+      "id": 6407,
+      "name": "cariosus creptio iure",
+      "key": "demulceo",
+      "field_type": "congregatio",
+      "options": [],
+      "required": false,
+      "label": "ago crudelis decor",
+      "description": "",
+      "scope_id": 1108,
+      "scope_type": "Organization",
+      "created_at": "2026-03-25T05:45:38.005-04:00"
+    },
+    {
+      "id": 6733,
+      "name": "curiositas",
+      "key": "certus",
+      "field_type": "brevis",
+      "options": [
+        {
+          "label": {
+            "en": "delibero"
+          },
+          "value": "neque"
+        },
+        {
+          "label": {
+            "en": "usus"
+          },
+          "value": "tripudio"
+        },
+        {
+          "label": {
+            "en": "vir"
+          },
+          "value": "desipio"
+        },
+        {
+          "label": {
+            "en": "tui"
+          },
+          "value": "delicate"
+        },
+        {
+          "label": {
+            "en": "acceptus"
+          },
+          "value": "molestiae"
+        },
+        {
+          "label": {
+            "en": "advoco"
+          },
+          "value": "theatrum"
+        },
+        {
+          "label": {
+            "en": "patrocinor"
+          },
+          "value": "tertius"
+        },
+        {
+          "label": {
+            "en": "dolor"
+          },
+          "value": "toties"
+        },
+        {
+          "label": {
+            "en": "thermae"
+          },
+          "value": "aestivus"
+        }
+      ],
+      "required": false,
+      "label": "paulatim",
+      "description": null,
+      "scope_id": 1108,
+      "scope_type": "Organization",
+      "created_at": "2026-05-08T05:52:16.988-04:00"
+    },
+    {
+      "id": 6734,
+      "name": "vomito",
+      "key": "denique",
+      "field_type": "trado",
+      "options": [],
+      "required": false,
+      "label": "spes",
+      "description": null,
+      "scope_id": 1108,
+      "scope_type": "Organization",
+      "created_at": "2026-05-28T08:01:03.898-04:00"
+    },
+    {
+      "id": 6735,
+      "name": "conicio",
+      "key": "capto",
+      "field_type": "ante",
+      "options": [],
+      "required": false,
+      "label": "animi",
+      "description": null,
+      "scope_id": 1108,
+      "scope_type": "Organization",
+      "created_at": "2026-01-21T16:10:29.316-04:00"
+    }
+  ],
+  "meta": {
+    "total_count": 7,
+    "limit": 5,
+    "offset": 0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "data": {
+    "id": 82929,
+    "mobilize_event_id": 20137,
+    "start_time": "2026-07-07T22:01:43.294+10:00",
+    "end_time": "2026-05-20T17:53:23.627+10:00",
+    "title": "quo utpote",
+    "created_at": "2026-02-15T11:42:46.571+10:00",
+    "updated_at": "2026-06-26T21:05:24.547+10:00",
+    "location_name": null,
+    "location_data": null,
+    "lonlat": null,
+    "location_address": null,
+    "show_rsvp_bar": true,
+    "show_title_in_form": false,
+    "max_capacity": 0,
+    "note": null,
+    "tags": [],
+    "zoom_account_id": null,
+    "zoom_meeting_id": null,
+    "zoom_meeting_data": null,
+    "zoom_join_before_host": false,
+    "zoom_attendance_synced_at": null,
+    "source_calendar_item_id": null,
+    "event_type": "voro",
+    "paired_meci_id": null,
+    "recurring_schedule_id": null,
+    "mobilize_event_task_id": null,
+    "host_user_ids": [],
+    "rsvp_count": 0,
+    "attendance_count": 0,
+    "host_tools_url": "https://enchanted-developmental.info",
+    "primary_session_id": 82929,
+    "city_state_label": null
+  },
+  "meta": {
+    "total_count": 1,
+    "limit": 1,
+    "offset": 0
+  }
+}
