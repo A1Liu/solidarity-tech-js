@@ -64,3 +64,16 @@ export function listTeamMembers(
     schema: StTeamMembersResponse,
   });
 }
+
+/** Every team member endpoint function, for spreading into `Endpoints`. */
+export const teamMemberEndpoints = {
+  listTeamMembers,
+} as const;
+
+/** Every team member zod schema, for spreading into `Schemas`. */
+export const teamMemberSchemas = {
+  StScopeType,
+  StTeamMemberAssignment,
+  StTeamMember,
+  StTeamMembersResponse,
+} as const;

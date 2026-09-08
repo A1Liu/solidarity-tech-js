@@ -168,3 +168,21 @@ export function deleteEventSession(
 ): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/event_sessions/${id}`);
 }
+
+/** Every event session endpoint function, for spreading into `Endpoints`. */
+export const eventSessionEndpoints = {
+  listEventSessions,
+  countEventSessions,
+  createEventSession,
+  getEventSession,
+  updateEventSession,
+  deleteEventSession,
+} as const;
+
+/** Every event session zod schema, for spreading into `Schemas`. */
+export const eventSessionSchemas = {
+  StEventSessionsResponse,
+  StEventSessionResponse,
+  StEventSessionMutationResponse,
+  StEventSessionCountResponse,
+} as const;

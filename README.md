@@ -3,6 +3,10 @@
 A typed JS/TS client for the [Solidarity Tech](https://solidarity.tech) API
 (`https://api.solidarity.tech/v1`).
 
+**NOTE: THIS IS NOT PRODUCTION READY, and will experience constant breaking changes.
+Please pin to an exact version if you would like to use this, and expect large
+breaking changes upon update.**
+
 Much of this SDK started life generated from Solidarity Tech's OpenAPI document,
 which is stale and wrong in both directions — it declares operations the API
 answers 404 for, and omits ones it serves. **Live responses are the source of

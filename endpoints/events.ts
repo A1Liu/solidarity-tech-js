@@ -185,3 +185,20 @@ export function getEvent(
 ): Promise<ApiResult<unknown>> {
   return apiGet(config, `/events/${id}`);
 }
+
+/** Every event endpoint function, for spreading into `Endpoints`. */
+export const eventEndpoints = {
+  listEvents,
+  getEvent,
+} as const;
+
+/** Every event zod schema, for spreading into `Schemas`. */
+export const eventSchemas = {
+  StCoordinates,
+  StAddressComponent,
+  StLocationData,
+  StEventSession,
+  StEventAutomationStatus,
+  StEvent,
+  StEventsResponse,
+} as const;
