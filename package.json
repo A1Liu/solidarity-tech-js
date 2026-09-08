@@ -6,6 +6,17 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "default": "./dist/types.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "types": [
+        "./dist/types.d.ts"
+      ]
     }
   },
   "version": "0.1.14",
@@ -21,7 +32,7 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "compile": "tsc -p tsconfig.build.json",
+    "compile": "rm -rf dist && tsc -p tsconfig.build.json",
     "probe": "bun run ./scripts/probe.ts",
     "capture": "bun run ./scripts/capture.ts",
     "draft": "bun run ./scripts/draft.ts",

@@ -22,7 +22,7 @@ export interface StUserCreate {
   email_permission?: boolean | null;
 }
 
-const StPostUserResultSchema = z.object({
+export const StPostUserResultSchema = z.object({
   id: z.number(),
   message: z.string(),
 });
@@ -36,3 +36,13 @@ export function createUser(
 ): Promise<ApiResult<StUserCreateResponse>> {
   return apiPost(config, "/users", { body, schema: StPostUserResultSchema });
 }
+
+/** Every user endpoint function, for spreading into `Endpoints`. */
+export const userEndpoints = {
+  createUser,
+} as const;
+
+/** Every user zod schema, for spreading into `Schemas`. */
+export const userSchemas = {
+  StPostUserResultSchema,
+} as const;

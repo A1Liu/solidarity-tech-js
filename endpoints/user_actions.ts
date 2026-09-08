@@ -29,7 +29,7 @@ export interface StUserActionCreate {
   data?: StUserActionData;
 }
 
-const StCreateUserActionSchema = z.object({
+export const StCreateUserActionSchema = z.object({
   id: z.number(),
   message: z.string(),
 });
@@ -46,3 +46,13 @@ export function createUserAction(
     schema: StCreateUserActionSchema,
   });
 }
+
+/** Every user action endpoint function, for spreading into `Endpoints`. */
+export const userActionEndpoints = {
+  createUserAction,
+} as const;
+
+/** Every user action zod schema, for spreading into `Schemas`. */
+export const userActionSchemas = {
+  StCreateUserActionSchema,
+} as const;

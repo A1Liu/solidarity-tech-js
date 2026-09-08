@@ -80,3 +80,18 @@ export function getOrganization(
     schema: StOrganizationResponse,
   });
 }
+
+/** Every organization endpoint function, for spreading into `Endpoints`. */
+export const organizationEndpoints = {
+  listOrganizations,
+  getOrganization,
+} as const;
+
+/** Every organization zod schema, for spreading into `Schemas`. */
+export const organizationSchemas = {
+  StAssessmentStatus,
+  StOrganization,
+  StOrganizationDetail,
+  StOrganizationsResponse,
+  StOrganizationResponse,
+} as const;

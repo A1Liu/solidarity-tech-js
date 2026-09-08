@@ -125,3 +125,20 @@ export function deleteAgentAssignment(
 ): Promise<ApiResult<unknown>> {
   return apiDelete(config, `/agent_assignments/${id}`);
 }
+
+/** Every agent assignment endpoint function, for spreading into `Endpoints`. */
+export const agentAssignmentEndpoints = {
+  listAgentAssignments,
+  getAgentAssignment,
+  createAgentAssignment,
+  updateAgentAssignment,
+  deleteAgentAssignment,
+} as const;
+
+/** Every agent assignment zod schema, for spreading into `Schemas`. */
+export const agentAssignmentSchemas = {
+  StAgentAssignment,
+  StAgentAssignmentsResponse,
+  StAgentAssignmentResponse,
+  StAgentAssignmentMutationResponse,
+} as const;

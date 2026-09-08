@@ -233,3 +233,22 @@ export type Text = z.infer<typeof text>;
 export type TextsResponse = z.infer<typeof textsResponse>;
 export type User = z.infer<typeof user>;
 export type UsersResponse = z.infer<typeof usersResponse>;
+
+/** Every shared zod schema, for spreading into `Schemas`. */
+export const coreSchemas = {
+  paginationMeta,
+  userAddress,
+  cursorMeta,
+  activity,
+  activitiesResponse,
+  call,
+  callsResponse,
+  chapter,
+  chaptersResponse,
+  customUserProperty,
+  customUserPropertiesResponse,
+  text,
+  textsResponse,
+  user,
+  usersResponse,
+} as const;

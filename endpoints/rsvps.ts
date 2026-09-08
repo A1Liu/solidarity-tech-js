@@ -34,7 +34,7 @@ export interface StEventRsvpUpdate {
   source_system?: string | null;
 }
 
-const StEventRsvpSchema = z.object({
+export const StEventRsvpSchema = z.object({
   id: z.number(),
   event_id: z.number(),
   event_session_id: z.number(),
@@ -62,7 +62,8 @@ const StEventRsvpSchema = z.object({
   updated_at: z.string(),
 });
 
-const StCreateEventRsvpsResponseSchema = mutationResponse(StEventRsvpSchema);
+export const StCreateEventRsvpsResponseSchema =
+  mutationResponse(StEventRsvpSchema);
 
 export const StListEventRsvpsResponseSchema = listResponse(StEventRsvpSchema);
 
@@ -109,3 +110,18 @@ export function updateEventRsvp(
     schema: StCreateEventRsvpsResponseSchema,
   });
 }
+
+/** Every event RSVP endpoint function, for spreading into `Endpoints`. */
+export const rsvpEndpoints = {
+  createEventRsvp,
+  listEventRsvps,
+  updateEventRsvp,
+} as const;
+
+/** Every event RSVP zod schema, for spreading into `Schemas`. */
+export const rsvpSchemas = {
+  StIsAttendingSchema,
+  StEventRsvpSchema,
+  StCreateEventRsvpsResponseSchema,
+  StListEventRsvpsResponseSchema,
+} as const;
