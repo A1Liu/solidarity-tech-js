@@ -34,6 +34,19 @@ resolves to an `ApiResult<T>`, which is `{ ok: true, data }` or
 `{ ok: false, error }`. Successful bodies are validated with Zod before they are
 returned, so a `data` you receive matches its declared type.
 
+Every result also carries the response `headers`, so rate-limit information is
+reachable without wrapping `fetch`. `retryAfterMs` reads a `Retry-After` header
+(seconds or HTTP date) into milliseconds:
+
+```typescript
+import { retryAfterMs } from "@a1liu/solidarity-tech-api";
+
+const res = await client.createUser(body);
+if (!res.ok && res.status === 429) {
+  await sleep(retryAfterMs(res.headers) ?? 30_000);
+}
+```
+
 `createClient` binds your configuration into every endpoint. The underlying
 functions are also exported directly, each taking `ClientConfig` first:
 

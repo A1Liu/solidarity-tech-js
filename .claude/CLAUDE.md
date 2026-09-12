@@ -32,19 +32,12 @@ When you add, rename, or delete a module, update **all five** places:
 When you add a single endpoint or schema to an existing module, only step 1
 applies — the spreads pick it up automatically.
 
-`tests/exports.ts` guards all of this: it asserts every exported function and
-schema in each module appears in that module's group, that both groups reach
-the package-level objects, that `Endpoints` holds only functions, that
-`Schemas` holds only zod schemas, and that the two are disjoint. If you add a
-module, add it to the `MODULES` list in that file too.
-
-These lists have silently drifted before: `users`, `user_actions`, and `rsvps`
-were spread into `Endpoints` but never re-exported, so `StUserCreate`,
-`StCreateUserAction`, and `StEventRsvp` were unreachable from the package root
-even though they were exported from their own modules. That is what
-`tests/exports.ts` now exists to catch. The one thing it cannot see is
-`types.ts`, which is types-only and has no runtime surface — check that list by
-eye.
+Nothing checks these lists automatically. They have silently drifted before:
+`users`, `user_actions`, and `rsvps` were spread into `Endpoints` but never
+re-exported, so `StUserCreate`, `StCreateUserAction`, and `StEventRsvp` were
+unreachable from the package root even though they were exported from their
+own modules. Check all five places by eye, including `types.ts`, which is
+types-only and has no runtime surface.
 
 `index.ts` uses `export *` (values _and_ types); `types.ts` uses
 `export type *`. Do not make `index.ts` re-export `./types` to dedupe the two
@@ -75,8 +68,7 @@ export type StFoo = z.infer<typeof StFooSchema>;
 
 Because `index.ts` star-exports each endpoint module, an `export const` schema
 reaches the package root by name automatically. Add it to the module's
-`*Schemas` object as well so it also shows up in the `Schemas` registry;
-`tests/exports.ts` fails if you forget.
+`*Schemas` object as well so it also shows up in the `Schemas` registry.
 
 The one exception is genuinely internal field-level helpers that exist only to
 normalize a single property of a larger schema and have no exported type of
