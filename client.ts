@@ -192,20 +192,19 @@ async function request<T>(
  * `undefined` when the response carried no usable `Retry-After`.
  *
  * `Retry-After` is either a count of seconds or an HTTP date; a date in the
- * past yields `0`. Accepts either a result or its headers:
+ * past yields `0`.
  *
  * ```ts
  * const res = await client.createUser(body);
  * if (!res.ok && res.status === 429) {
- *   await sleep(retryAfterMs(res) ?? 30_000);
+ *   await sleep(retryAfterMs(res.headers) ?? 30_000);
  * }
  * ```
  */
 export function retryAfterMs(
-  source: ResponseHeaders | { headers: ResponseHeaders },
+  headers: ResponseHeaders,
   now: number = Date.now(),
 ): number | undefined {
-  const headers = "headers" in source ? source.headers : source;
   const header = headers.get("retry-after");
   if (header === null || header.trim() === "") return undefined;
 

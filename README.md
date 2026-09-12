@@ -43,7 +43,7 @@ import { retryAfterMs } from "@a1liu/solidarity-tech-api";
 
 const res = await client.createUser(body);
 if (!res.ok && res.status === 429) {
-  await sleep(retryAfterMs(res) ?? 30_000);
+  await sleep(retryAfterMs(res.headers) ?? 30_000);
 }
 ```
 

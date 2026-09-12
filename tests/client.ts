@@ -45,7 +45,7 @@ describe("ApiResult.headers", () => {
     expect(result.ok).toBe(false);
     expect(result.status).toBe(429);
     expect(result.headers.get("retry-after")).toBe("7");
-    expect(retryAfterMs(result)).toBe(7000);
+    expect(retryAfterMs(result.headers)).toBe(7000);
   });
 
   it("carries the response headers on a validation failure", async () => {
@@ -71,7 +71,7 @@ describe("ApiResult.headers", () => {
     expect(result.error?.type).toBe("network");
     expect(result.headers).toBeInstanceOf(Headers);
     expect([...result.headers.keys()]).toEqual([]);
-    expect(retryAfterMs(result)).toBeUndefined();
+    expect(retryAfterMs(result.headers)).toBeUndefined();
   });
 });
 
