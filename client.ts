@@ -27,10 +27,20 @@ type QueryValue =
 /** Query string parameters. `undefined` and `null` values are omitted. */
 export type QueryParams = Record<string, QueryValue>;
 
+/**
+ * The `Headers` of a `fetch` `Response`. Written as an indexed type rather
+ * than the bare `Headers` global because `@types/bun` and `@types/node` each
+ * declare a `Headers` that is not assignable to the other's, while both agree
+ * on what `Response.headers` is.
+ */
+export type ResponseHeaders = Response["headers"];
+
 /** Result of a successful request whose body passed validation. */
 export interface ApiSuccess<T> {
   ok: true;
   status: number;
+  /** Response headers, e.g. `Retry-After` or `X-RateLimit-*`. */
+  headers: ResponseHeaders;
   data: T;
   error?: undefined;
 }
@@ -39,6 +49,11 @@ export interface ApiSuccess<T> {
 export interface ApiFailure {
   ok: false;
   status: number;
+  /**
+   * Response headers. Empty when no response was received (`error.type` is
+   * `"network"`), so callers can read it without branching first.
+   */
+  headers: ResponseHeaders;
   error: ApiError;
   /** The raw parsed body, when one was received. */
   data: unknown;
@@ -120,6 +135,7 @@ async function request<T>(
     return {
       ok: false,
       status: 0,
+      headers: new Headers(),
       data: undefined,
       error: {
         type: "network",
@@ -136,6 +152,7 @@ async function request<T>(
     return {
       ok: false,
       status: res.status,
+      headers: res.headers,
       data: raw,
       error: {
         type: "http",
@@ -151,6 +168,7 @@ async function request<T>(
     return {
       ok: false,
       status: res.status,
+      headers: res.headers,
       data: raw,
       error: {
         type: "validation",
@@ -161,7 +179,41 @@ async function request<T>(
     };
   }
 
-  return { ok: true, status: res.status, data: parsed.data };
+  return {
+    ok: true,
+    status: res.status,
+    headers: res.headers,
+    data: parsed.data,
+  };
+}
+
+/**
+ * How long a `429` (or `503`) asked the caller to wait, in milliseconds, or
+ * `undefined` when the response carried no usable `Retry-After`.
+ *
+ * `Retry-After` is either a count of seconds or an HTTP date; a date in the
+ * past yields `0`. Accepts either a result or its headers:
+ *
+ * ```ts
+ * const res = await client.createUser(body);
+ * if (!res.ok && res.status === 429) {
+ *   await sleep(retryAfterMs(res) ?? 30_000);
+ * }
+ * ```
+ */
+export function retryAfterMs(
+  source: ResponseHeaders | { headers: ResponseHeaders },
+  now: number = Date.now(),
+): number | undefined {
+  const headers = "headers" in source ? source.headers : source;
+  const header = headers.get("retry-after");
+  if (header === null || header.trim() === "") return undefined;
+
+  const seconds = Number(header);
+  if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+
+  const date = Date.parse(header);
+  return Number.isNaN(date) ? undefined : Math.max(0, date - now);
 }
 
 interface GetOptions<T> {
