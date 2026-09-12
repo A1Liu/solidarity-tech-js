@@ -16,6 +16,13 @@ export interface StUserActionData {
   call_permission?: boolean | null;
   email_permission?: boolean | null;
   custom_user_properties?: Record<string, string> | null;
+  /**
+   * When true, the API validates that `phone_number` can receive SMS and
+   * rejects the request if it cannot.
+   */
+  phone_number_textable_validation?: boolean | null;
+  /** External identifier used to match the request to an existing user. */
+  lookup_key?: string | null;
 }
 
 /**

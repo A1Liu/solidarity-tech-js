@@ -20,6 +20,13 @@ export interface StUserCreate {
   sms_permission?: boolean | null;
   call_permission?: boolean | null;
   email_permission?: boolean | null;
+  /**
+   * When true, the API validates that `phone_number` can receive SMS and
+   * rejects the request if it cannot.
+   */
+  phone_number_textable_validation?: boolean | null;
+  /** External identifier used to match the request to an existing user. */
+  lookup_key?: string | null;
 }
 
 export const StPostUserResultSchema = z.object({
