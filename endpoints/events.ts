@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { apiGet } from "../client";
+import { apiGet, apiPost } from "../client";
 import type { ApiResult, ClientConfig } from "../client";
 import { listResponse } from "../schemas";
-import type { ListParams } from "../schemas";
+import type { ListParams, ScopeType } from "../schemas";
 
 /* ------------------------------------------------------------------ *
  * Schemas
@@ -164,6 +164,85 @@ export type StEvent = z.infer<typeof StEvent>;
 export type StEventsResponse = z.infer<typeof StEventsResponse>;
 
 /* ------------------------------------------------------------------ *
+ * Request shapes
+ *
+ * From the live reference (https://www.solidarity.tech/reference/post_events);
+ * the vendored OpenAPI document does not declare `POST /events` at all.
+ * ------------------------------------------------------------------ */
+
+/**
+ * A hybrid event gets an in-person session at `location_address` and a
+ * virtual one at `virtual_url`. Sessions themselves are only ever one or the
+ * other (`EventSessionType`).
+ */
+export type EventType = "virtual" | "in_person" | "hybrid";
+
+/**
+ * On/off switches for an event's automated emails and texts -- the same ones
+ * as the dashboard's Automated Communications tab. Omitted switches keep their
+ * defaults, and the result is echoed back as the event's `automation_status`.
+ * Unknown keys or non-boolean values are a 422.
+ */
+export interface EventAutomatedCommunications {
+  /** Default follows the organization's RSVP confirmation template (on for most). */
+  rsvp_confirmation_email?: boolean;
+  /** 24 hours before the session. Default on. */
+  day_before_reminder_email?: boolean;
+  /** 24 hours before the session. Default off. */
+  day_before_reminder_text?: boolean;
+  /** 1 hour before the session. Default on. */
+  day_of_reminder_text?: boolean;
+  /** Self check-in text 10 minutes before the session. Default off. */
+  ten_min_before_reminder_text?: boolean;
+  /** 30 to 90 minutes after the session ends. Default off. */
+  post_event_survey_email?: boolean;
+  /** 30 to 90 minutes after the session ends. Default off. */
+  post_event_survey_text?: boolean;
+}
+
+/**
+ * POST /events. Creates the event and its first session together, so the
+ * session's fields (`start_time`, `location_*`, `max_capacity`, ...) are here
+ * rather than on a separate `createEventSession` call.
+ */
+export interface EventCreate {
+  title: string;
+  event_type: EventType;
+  /** Unix seconds. */
+  start_time: number;
+  /** Unix seconds. */
+  end_time: number;
+  /** The organization or chapter the event belongs to. */
+  scope_id: number;
+  scope_type: ScopeType;
+  /**
+   * For `virtual`, the meeting URL. For `in_person` and `hybrid`, the street
+   * address of the in-person session.
+   */
+  location_address?: string | null;
+  /** Meeting URL for the virtual session of a `hybrid` event. */
+  virtual_url?: string | null;
+  /** Display name for the location, e.g. "City Hall". */
+  location_name?: string | null;
+  /**
+   * Title of the first session; defaults to `title`. Capped at 65 characters,
+   * or 200 with `allow_long_title`.
+   */
+  session_title?: string | null;
+  /** Raises the session title cap from 65 to 200 characters. Default false. */
+  allow_long_title?: boolean | null;
+  tags?: string[] | null;
+  /** Capacity of the first session. 0 means unlimited. */
+  max_capacity?: number | null;
+  /** For `in_person` events. Geocoded from the address when omitted. */
+  latitude?: number | null;
+  longitude?: number | null;
+  /** Duplicate detection otherwise answers 409. Default false. */
+  skip_duplicate_check?: boolean | null;
+  automated_communications?: EventAutomatedCommunications | null;
+}
+
+/* ------------------------------------------------------------------ *
  * Events
  * ------------------------------------------------------------------ */
 
@@ -178,6 +257,23 @@ export function listEvents(
   });
 }
 
+/**
+ * POST /events — Creates an event and its first session.
+ *
+ * Answers 201, 404 when the scope does not exist, 409 for a duplicate (see
+ * `skip_duplicate_check`), and 422 on validation. The 201 body is `unknown`
+ * because it has not been sampled: the reference does not describe it, and
+ * with no `DELETE /events/{id}` a probe would have nothing to clean up with.
+ * Every other mutation on this API answers `{ data: <element> }`, so the new
+ * event's id is expected at `data.id`.
+ */
+export function createEvent(
+  config: ClientConfig,
+  body: EventCreate,
+): Promise<ApiResult<unknown>> {
+  return apiPost(config, "/events", { body });
+}
+
 /** GET /events/{id} — Shows a single event. */
 export function getEvent(
   config: ClientConfig,
@@ -189,6 +285,7 @@ export function getEvent(
 /** Every event endpoint function, for spreading into `Endpoints`. */
 export const eventEndpoints = {
   listEvents,
+  createEvent,
   getEvent,
 } as const;
 
