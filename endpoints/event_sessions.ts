@@ -74,7 +74,10 @@ export interface EventSessionCreate {
   start_time: number | null;
   end_time: number | null;
   event_type?: EventSessionType | null;
+  /** Capped at 65 characters, or 200 with `allow_long_title`. */
   title?: string | null;
+  /** Raises the title cap from 65 to 200 characters. Default false. */
+  allow_long_title?: boolean | null;
   location_name?: string | null;
   location_data?: EventLocationData;
   location_address?: string | null;
@@ -88,7 +91,10 @@ export interface EventSessionCreate {
 export interface EventSessionUpdate {
   start_time?: number | null;
   end_time?: number | null;
+  /** Capped at 65 characters, or 200 with `allow_long_title`. */
   title?: string | null;
+  /** Raises the title cap from 65 to 200 characters. Default false. */
+  allow_long_title?: boolean | null;
   location_name?: string | null;
   location_data?: EventLocationData;
   location_address?: string | null;

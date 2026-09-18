@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { StEventsResponse } from "../endpoints/events";
+import { StEventsResponse, createEvent } from "../endpoints/events";
 import sample from "./data/events.json";
 
 describe("StEventsResponse schema", () => {
@@ -58,5 +58,40 @@ describe("StEventsResponse schema", () => {
       day_of_email_reminder: false,
       day_of_text_reminder: true,
     });
+  });
+});
+
+describe("createEvent", () => {
+  it("POSTs the body to /events and returns the raw 201 body", async () => {
+    const calls: Array<{ url: string; init?: RequestInit }> = [];
+    const fetchImpl = (async (url: string | URL, init?: RequestInit) => {
+      calls.push({ url: String(url), init });
+      return new Response(JSON.stringify({ data: { id: 42 } }), {
+        status: 201,
+        headers: { "content-type": "application/json" },
+      });
+    }) as unknown as typeof fetch;
+
+    const body = {
+      title: "Canvass launch",
+      event_type: "in_person" as const,
+      start_time: 1_700_000_000,
+      end_time: 1_700_003_600,
+      scope_id: 7,
+      scope_type: "Chapter" as const,
+      allow_long_title: true,
+      automated_communications: { day_before_reminder_text: true },
+    };
+    const result = await createEvent(
+      { apiKey: "test", fetch: fetchImpl },
+      body,
+    );
+
+    expect(calls).toHaveLength(1);
+    expect(calls[0].url).toBe("https://api.solidarity.tech/v1/events");
+    expect(calls[0].init?.method).toBe("POST");
+    expect(JSON.parse(String(calls[0].init?.body))).toEqual(body);
+    expect(result.ok).toBe(true);
+    expect(result.data).toEqual({ data: { id: 42 } });
   });
 });

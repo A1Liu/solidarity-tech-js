@@ -237,6 +237,9 @@ const undrivable: Record<string, string> = {
   agent_assignments:
     "DELETE /{id} answers 404 for a row GET returns; " +
     "a run orphaned one assignment before this was known",
+  events:
+    "the reference declares POST but no DELETE /{id}, " +
+    "so a create would have nothing to clean up with",
 };
 
 /* ------------------------------------------------------------------ *
