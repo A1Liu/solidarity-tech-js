@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { apiGet, apiPost } from "../client";
 import type { ApiResult, ClientConfig } from "../client";
-import { listResponse } from "../schemas";
+import { itemResponse, listResponse } from "../schemas";
 import type { ListParams, ScopeType } from "../schemas";
 
 /* ------------------------------------------------------------------ *
@@ -116,14 +116,19 @@ export const StEventSession = z.object({
 });
 
 /** Per-event toggles for the automated RSVP/reminder messages. */
-export const StEventAutomationStatus = z.object({
-  rsvp_confirmation_email: z.boolean(),
-  rsvp_confirmation_text: z.boolean(),
-  day_before_email_reminder: z.boolean(),
-  day_before_text_reminder: z.boolean(),
-  day_of_email_reminder: z.boolean(),
-  day_of_text_reminder: z.boolean(),
-});
+export const StEventAutomationStatus = z
+  .object({
+    rsvp_confirmation_email: z.boolean(),
+    rsvp_confirmation_text: z.boolean(),
+    day_before_email_reminder: z.boolean(),
+    day_before_text_reminder: z.boolean(),
+    day_of_email_reminder: z.boolean(),
+    day_of_text_reminder: z.boolean(),
+    ten_min_before_text_reminder: z.boolean(),
+    post_event_survey_email: z.boolean(),
+    post_event_survey_text: z.boolean(),
+  })
+  .partial();
 
 export const StEvent = z.object({
   id: z.number().int(),
@@ -153,6 +158,7 @@ export const StEvent = z.object({
   created_at: z.string(),
 });
 
+export const StEventResponse = itemResponse(StEvent);
 export const StEventsResponse = listResponse(StEvent);
 
 export type StCoordinates = z.infer<typeof StCoordinates>;
@@ -162,6 +168,7 @@ export type StEventSession = z.infer<typeof StEventSession>;
 export type StEventAutomationStatus = z.infer<typeof StEventAutomationStatus>;
 export type StEvent = z.infer<typeof StEvent>;
 export type StEventsResponse = z.infer<typeof StEventsResponse>;
+export type StEventResponse = z.infer<typeof StEventResponse>;
 
 /* ------------------------------------------------------------------ *
  * Request shapes
@@ -270,16 +277,21 @@ export function listEvents(
 export function createEvent(
   config: ClientConfig,
   body: EventCreate,
-): Promise<ApiResult<unknown>> {
-  return apiPost(config, "/events", { body });
+): Promise<ApiResult<StEventResponse>> {
+  return apiPost(config, "/events", {
+    body,
+    schema: StEventResponse,
+  });
 }
 
 /** GET /events/{id} — Shows a single event. */
 export function getEvent(
   config: ClientConfig,
   id: number,
-): Promise<ApiResult<unknown>> {
-  return apiGet(config, `/events/${id}`);
+): Promise<ApiResult<StEventResponse>> {
+  return apiGet(config, `/events/${id}`, {
+    schema: StEventResponse,
+  });
 }
 
 /** Every event endpoint function, for spreading into `Endpoints`. */

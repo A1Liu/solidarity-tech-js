@@ -8,16 +8,18 @@ if (!apiKey) {
 
 const client = createClient({ apiKey });
 
-const res = await client.createEventRsvp({
-  user_id: 10713639,
-  event_id: 20524,
-  event_session_id: 56887,
-  is_attending: "yes",
-  is_confirmed: true,
-  agent_user_id: 10713639,
-  source: "ehllo",
-  source_system: "ehllo sys",
-});
+// const res = await client.createEvent({
+//   event_type: "hybrid",
+//   scope_id: 3355,
+//   scope_type: "Chapter",
+//
+//   title: "test event",
+//
+//   start_time: Date.now(),
+//   end_time: Date.now() + 1000,
+// });
+
+const res = await client.getEvent(35754);
 
 // 866534
 // const res = await client.listEventRsvps({
