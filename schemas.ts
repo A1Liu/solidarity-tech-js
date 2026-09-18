@@ -30,7 +30,7 @@ export function listResponse<T extends ZodType>(element: T) {
 
 /** `GET /things/{id}` — one element, in the same envelope as the list. */
 export function itemResponse<T extends ZodType>(element: T) {
-  return z.object({ data: element, meta: paginationMeta });
+  return z.object({ data: element, meta: paginationMeta.nullish() });
 }
 
 /** `POST /things`, `PUT /things/{id}` — one element, and no pagination `meta`. */

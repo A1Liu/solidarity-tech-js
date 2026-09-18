@@ -8,18 +8,18 @@ if (!apiKey) {
 
 const client = createClient({ apiKey });
 
-// const res = await client.createEvent({
-//   event_type: "hybrid",
-//   scope_id: 3355,
-//   scope_type: "Chapter",
-//
-//   title: "test event",
-//
-//   start_time: Date.now(),
-//   end_time: Date.now() + 1000,
-// });
+const res = await client.createEvent({
+  event_type: "hybrid",
+  scope_id: 3355,
+  scope_type: "Chapter",
 
-const res = await client.getEvent(35754);
+  title: "test event",
+
+  start_time: Date.now(),
+  end_time: Date.now() + 1000,
+});
+
+// const res = await client.getEvent(35799);
 
 // 866534
 // const res = await client.listEventRsvps({
