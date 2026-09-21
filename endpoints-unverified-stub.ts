@@ -607,19 +607,52 @@ export function createUserNote(
  * Users
  * ------------------------------------------------------------------ */
 
+/**
+ * Body for PUT /users/{id}. Fields past the vendored document's dozen are from
+ * the live reference (https://www.solidarity.tech/reference/put_users-id);
+ * `donation_charge` is declared there too and left out here, its shape not
+ * being described. The response is still `unknown` -- the reference does not
+ * describe it either.
+ */
 export interface UserUpdate {
   phone_number?: string | null;
+  /** Clears the primary phone number (and drops it from `other_phone_numbers`). */
+  clear_phone_number?: boolean | null;
   email?: string | null;
+  /** Clears the primary email (and drops it from `other_emails`). */
+  clear_email?: boolean | null;
   first_name?: string | null;
   last_name?: string | null;
+  /** Nickname, community name, or alternate romanization. Searchable. */
+  alternate_name?: string | null;
   preferred_language?: string | null;
   second_language?: string | null;
+  /** Primary chapter. */
   chapter_id?: number | null;
+  /** Every chapter the user belongs to, replacing the current set. Requires the multi-chapter feature. */
+  chapter_ids?: number[] | null;
+  /** Chapters to add. Requires the multi-chapter feature. */
+  add_chapter_ids?: number[] | null;
+  /** Chapters to remove. Requires the multi-chapter feature. */
+  remove_chapter_ids?: number[] | null;
+  /** With `chapter_id`, makes that chapter the user's only one. */
+  set_exclusive_chapter?: boolean | null;
+  referred_by_user_id?: number | null;
   custom_user_properties?: Record<string, string> | null;
+  /**
+   * How Multiple Checkboxes properties in `custom_user_properties` are
+   * written: appended to what the user has (true, the default) or replacing
+   * it (false).
+   */
+  append_custom_user_properties?: boolean | null;
   address?: Address | null;
+  /** Assessment status key to set on the user (maps to classification). */
+  assessment?: string | null;
   sms_permission?: boolean | null;
   call_permission?: boolean | null;
   email_permission?: boolean | null;
+  /** IANA identifier, e.g. `America/New_York`. */
+  timezone?: string | null;
 }
 
 /** GET /users — Retrieves a list of users. */
