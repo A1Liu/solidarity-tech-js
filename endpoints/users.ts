@@ -1,4 +1,4 @@
-import { apiPost } from "../client";
+import { apiDelete, apiPost } from "../client";
 import type { ApiResult, ClientConfig } from "../client";
 import { z } from "zod";
 import type { Address } from "../schemas";
@@ -72,12 +72,41 @@ export function createUser(
   return apiPost(config, "/users", { body, schema: StPostUserResultSchema });
 }
 
+/**
+ * The 200 body of DELETE /users/{id}, from the live reference
+ * (https://www.solidarity.tech/reference/delete_users-id); the vendored
+ * document does not declare the operation at all. Not yet checked against a
+ * live response.
+ *
+ * `id` is only present when the user was kept: a sub-organization API key
+ * removes the user's in-scope chapter memberships instead of deleting them,
+ * and answers with the id of the user it left in place.
+ */
+export const StDeleteUserResultSchema = z.object({
+  message: z.string(),
+  id: z.number().int().nullish(),
+});
+
+export type StDeleteUserResult = z.infer<typeof StDeleteUserResultSchema>;
+
+/** DELETE /users/{id} — Deletes a user. Answers 404 when there is none. */
+export function deleteUser(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<StDeleteUserResult>> {
+  return apiDelete(config, `/users/${id}`, {
+    schema: StDeleteUserResultSchema,
+  });
+}
+
 /** Every user endpoint function, for spreading into `Endpoints`. */
 export const userEndpoints = {
   createUser,
+  deleteUser,
 } as const;
 
 /** Every user zod schema, for spreading into `Schemas`. */
 export const userSchemas = {
   StPostUserResultSchema,
+  StDeleteUserResultSchema,
 } as const;

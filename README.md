@@ -70,7 +70,7 @@ document is known to be wrong in places — `DELETE /agent_assignments/{id}` is
 declared but answers 404, for example. Verified endpoints have been checked
 against live responses.
 
-Today: **8 verified resource modules / 22 endpoint functions**, and **47
+Today: **8 verified resource modules / 23 endpoint functions**, and **47
 provisional functions** still in the stub.
 
 ## Development
