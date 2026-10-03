@@ -249,6 +249,16 @@ export interface EventCreate {
   automated_communications?: EventAutomatedCommunications | null;
 }
 
+/**
+ * GET /events. `scope_id` and `scope_type` filter to one organization or
+ * chapter; both are needed to identify a scope
+ * (https://www.solidarity.tech/reference/get_events).
+ */
+export interface ListEventsParams extends ListParams {
+  scope_id?: number;
+  scope_type?: ScopeType;
+}
+
 /* ------------------------------------------------------------------ *
  * Events
  * ------------------------------------------------------------------ */
@@ -256,7 +266,7 @@ export interface EventCreate {
 /** GET /events — Lists events. */
 export function listEvents(
   config: ClientConfig,
-  params: ListParams = {},
+  params: ListEventsParams = {},
 ): Promise<ApiResult<StEventsResponse>> {
   return apiGet(config, "/events", {
     query: { ...params },
