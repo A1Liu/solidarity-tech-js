@@ -263,6 +263,19 @@ export function apiPut<T = unknown>(
   });
 }
 
+/** Shared PATCH helper. Omit `schema` to receive the raw body as `unknown`. */
+export function apiPatch<T = unknown>(
+  config: ClientConfig,
+  path: string,
+  options: WriteOptions<T> = {},
+): Promise<ApiResult<T>> {
+  return request<T>(config, "PATCH", path, {
+    query: options.query,
+    body: options.body,
+    schema: options.schema ?? (z.unknown() as ZodType<T>),
+  });
+}
+
 /** Shared DELETE helper. Omit `schema` to receive the raw body as `unknown`. */
 export function apiDelete<T = unknown>(
   config: ClientConfig,
