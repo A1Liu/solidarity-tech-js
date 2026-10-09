@@ -30,6 +30,7 @@ import {
   teamMemberEndpoints,
   teamMemberSchemas,
 } from "./endpoints/team_members";
+import { pageEndpoints, pageSchemas } from "./endpoints/pages";
 
 export * from "./client";
 export * from "./schemas";
@@ -50,6 +51,7 @@ export const Endpoints = {
   ...agentAssignmentEndpoints,
   ...organizationEndpoints,
   ...teamMemberEndpoints,
+  ...pageEndpoints,
 } as const;
 
 /** Every zod schema, keyed by name, for parsing and composing API payloads. */
@@ -64,6 +66,7 @@ export const Schemas = {
   ...agentAssignmentSchemas,
   ...organizationSchemas,
   ...teamMemberSchemas,
+  ...pageSchemas,
 } as const;
 
 type EndpointFn = (config: ClientConfig, ...args: never[]) => unknown;
@@ -109,3 +112,4 @@ export * from "./endpoints/rsvps";
 export * from "./endpoints/agent_assignments";
 export * from "./endpoints/organizations";
 export * from "./endpoints/team_members";
+export * from "./endpoints/pages";

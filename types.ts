@@ -11,3 +11,4 @@ export type * from "./endpoints/rsvps";
 export type * from "./endpoints/agent_assignments";
 export type * from "./endpoints/organizations";
 export type * from "./endpoints/team_members";
+export type * from "./endpoints/pages";
