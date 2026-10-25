@@ -1,5 +1,15 @@
 {
   "name": "@a1liu/solidarity-tech-api",
+  "version": "0.1.20",
+  "description": "A typed JS/TS client for the Solidarity Tech API (https://api.solidarity.tech/v1).",
+  "author": "Albert Liu",
+  "license": "MIT",
+  "homepage": "https://github.com/A1Liu/solidarity-tech-js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/A1Liu/solidarity-tech-js.git"
+  },
+  "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -10,7 +20,8 @@
     "./types": {
       "types": "./dist/types.d.ts",
       "default": "./dist/types.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
@@ -19,18 +30,9 @@
       ]
     }
   },
-  "version": "0.1.20",
-  "devDependencies": {
-    "@faker-js/faker": "^10.5.0",
-    "@types/bun": "latest",
-    "genson-js": "^0.0.8",
-    "json-schema-to-zod": "^2.8.1",
-    "prettier": "^3.8.3",
-    "vitest": "^4.1.7"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "compile": "rm -rf dist && tsc -p tsconfig.build.json",
     "probe": "bun run ./scripts/probe.ts",
@@ -41,20 +43,24 @@
     "format": "prettier --write .",
     "update": "bun run ./scripts/update.ts"
   },
-  "files": [
-    "dist"
-  ],
   "dependencies": {
     "zod": "^4.4.3"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:A1Liu/solidarity-tech-js.git"
+  "peerDependencies": {
+    "typescript": ">=5"
   },
-  "author": "Albert Liu",
-  "license": "MIT",
-  "homepage": "https://github.com/A1Liu/solidarity-tech-js",
-  "trustedDependencies": [
-    "es5-ext"
-  ]
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.5.0",
+    "@types/bun": "latest",
+    "genson-js": "^0.0.8",
+    "json-schema-to-zod": "^2.8.1",
+    "prettier": "^3.8.3",
+    "typescript": "^5.5.3",
+    "vitest": "^4.1.7"
+  }
 }
