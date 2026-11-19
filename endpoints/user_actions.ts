@@ -1,5 +1,5 @@
 import z from "zod";
-import { apiPost } from "../client";
+import { apiDelete, apiPost } from "../client";
 import type { ApiResult, ClientConfig } from "../client";
 import type { Address } from "../schemas";
 
@@ -54,12 +54,39 @@ export function createUserAction(
   });
 }
 
+/**
+ * The 200 body of DELETE /user_actions/{id}. Undocumented; the shape is from a
+ * live response (2026-11-19): `{"message":"User action successfully deleted."}`.
+ */
+export const StDeleteUserActionResultSchema = z.object({
+  message: z.string(),
+});
+
+export type StDeleteUserActionResult = z.infer<
+  typeof StDeleteUserActionResultSchema
+>;
+
+/**
+ * DELETE /user_actions/{id} — Deletes a user action, leaving its user in
+ * place. Answers 404 when there is none.
+ */
+export function deleteUserAction(
+  config: ClientConfig,
+  id: number,
+): Promise<ApiResult<StDeleteUserActionResult>> {
+  return apiDelete(config, `/user_actions/${id}`, {
+    schema: StDeleteUserActionResultSchema,
+  });
+}
+
 /** Every user action endpoint function, for spreading into `Endpoints`. */
 export const userActionEndpoints = {
   createUserAction,
+  deleteUserAction,
 } as const;
 
 /** Every user action zod schema, for spreading into `Schemas`. */
 export const userActionSchemas = {
   StCreateUserActionSchema,
+  StDeleteUserActionResultSchema,
 } as const;
