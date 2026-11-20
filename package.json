@@ -1,6 +1,6 @@
 {
   "name": "@a1liu/solidarity-tech-api",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "A typed JS/TS client for the Solidarity Tech API (https://api.solidarity.tech/v1).",
   "author": "Albert Liu",
   "license": "MIT",
